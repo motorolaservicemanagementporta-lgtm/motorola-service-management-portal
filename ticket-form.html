@@ -12,36 +12,20 @@
     =========================================================
     MOTOROLA SERVICE MANAGEMENT PORTAL - MSMP
     Archivo: ticket-form.html
-    Versión: 3.0 OPERACIONAL AMSA
+    Versión: 3.1 OPERACIONAL AMSA
 
     CONCEPTO PRINCIPAL:
     Toda actividad ejecutada por Motorola debe generar un
     Ticket Motorola propio para respaldo, auditoría y reportes AMSA.
 
-    ID INTERNO:
-    MOT-YYYY-000001
-
-    REGLA OPERACIONAL:
+    REGLAS DEFINIDAS:
     - El Ticket Motorola es obligatorio.
-    - El ticket Coasin/Solver es una referencia externa.
-    - Puede existir, estar pendiente o regularizarse después.
-    - Una misma referencia Solver puede tener varias atenciones Motorola.
-
-    USUARIO PRINCIPAL:
-    Técnico Motorola.
-
-    ROLES:
-    - Técnico: crea y documenta atenciones.
-    - Supervisor: observa, comenta, reporta y audita.
-    - Admin: valida catálogos, usuarios, productos y problemas.
-
-    FUNCIONES INCLUIDAS:
-    - Fecha, hora y turno automáticos.
-    - Catálogos controlados con creación pendiente.
-    - Evidencias con clasificación.
-    - Base de Conocimiento obligatoria.
-    - Registro masivo Salas VCF.
-    - Registro Teléfonos Satelitales con checklist.
+    - El ticket Coasin/Solver es referencia externa.
+    - Puede existir o quedar pendiente.
+    - Una referencia Solver puede tener varias atenciones Motorola.
+    - Las revisiones masivas VCF y Satelitales son flujos separados.
+    - VCF no adjunta checklist en MSMP porque actualmente se gestiona en Microsoft Forms.
+    - Teléfonos Satelitales sí requieren checklist adjunto para auditoría AMSA.
     =========================================================
     */
 
@@ -52,9 +36,7 @@
       --motorola-light: #f4f7fb;
       --motorola-gray: #64748b;
       --motorola-border: #d8e2ef;
-      --motorola-warning: #f59e0b;
       --motorola-danger: #dc2626;
-      --motorola-success: #16a34a;
     }
 
     body {
@@ -92,7 +74,7 @@
     .sidebar-title {
       font-size: 13px;
       color: #93c5fd;
-      margin-bottom: 18px;
+      margin: 22px 0 12px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: .8px;
@@ -107,6 +89,7 @@
       margin-bottom: 8px;
       font-weight: 600;
       font-size: 14px;
+      cursor: pointer;
     }
 
     .menu-link:hover,
@@ -148,10 +131,6 @@
       padding: 34px;
     }
 
-    .page-header {
-      margin-bottom: 24px;
-    }
-
     .page-title {
       font-size: 32px;
       font-weight: 850;
@@ -179,7 +158,7 @@
       color: white;
       border-radius: 18px;
       padding: 22px;
-      margin-bottom: 22px;
+      margin: 22px 0;
     }
 
     .summary-grid {
@@ -241,7 +220,7 @@
     }
 
     textarea {
-      min-height: 110px;
+      min-height: 115px;
     }
 
     .required {
@@ -325,21 +304,6 @@
       color: var(--motorola-dark-blue);
     }
 
-    .btn-template {
-      background: #eef6ff;
-      color: var(--motorola-blue);
-      border: 1px solid #bfdbfe;
-      border-radius: 12px;
-      padding: 13px 18px;
-      font-weight: 850;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-
-    .btn-template:hover {
-      background: #dbeafe;
-    }
-
     .action-bar {
       display: flex;
       justify-content: flex-end;
@@ -367,6 +331,25 @@
       background: var(--motorola-blue);
       color: white;
       border-radius: 18px 18px 0 0;
+    }
+
+    .locked-box {
+      background: #f8fafc;
+      border: 1px solid var(--motorola-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+
+    .locked-label {
+      color: var(--motorola-gray);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .locked-value {
+      font-weight: 850;
+      color: #0f172a;
     }
 
     .template-table {
@@ -416,12 +399,16 @@
         <img src="assets/img/motorola-solutions-logo.svg" alt="Motorola Solutions">
       </div>
 
-      <div class="sidebar-title">Menú Operacional</div>
-
+      <div class="sidebar-title">Operación</div>
       <a href="dashboard.html" class="menu-link">📊 Dashboard</a>
       <a href="ticket-form.html" class="menu-link active">➕ Nueva Atención</a>
       <a href="tickets.html" class="menu-link">🎫 Atenciones</a>
-      <a href="templates.html" class="menu-link">⚡ Plantillas Operacionales</a>
+
+      <div class="sidebar-title">Operaciones Programadas</div>
+      <a class="menu-link" data-bs-toggle="modal" data-bs-target="#vcfModal">🖥️ Generar Ticket VCF</a>
+      <a class="menu-link" data-bs-toggle="modal" data-bs-target="#satModal">🛰️ Generar Ticket Teléfono Satelital</a>
+
+      <div class="sidebar-title">Gestión</div>
       <a href="evidence.html" class="menu-link">📁 Evidencias</a>
       <a href="knowledge-base.html" class="menu-link">📚 Base de Conocimiento</a>
       <a href="reports.html" class="menu-link">📈 Reportes</a>
@@ -441,8 +428,8 @@
         <div class="page-header">
           <h1 class="page-title">Nueva Atención Motorola</h1>
           <p class="page-subtitle">
-            Registra una actividad ejecutada por Motorola. Siempre se generará un Ticket Motorola
-            para respaldo interno y auditoría AMSA, aunque el ticket Coasin/Solver aún no exista.
+            Registra una actividad individual ejecutada por Motorola. Las revisiones masivas VCF y Satelitales
+            se generan desde el menú de Operaciones Programadas.
           </p>
         </div>
 
@@ -530,6 +517,7 @@
                 <label class="form-label">Usuario solicitante <span class="required">*</span></label>
                 <input list="usuarios" class="form-control" id="usuario" placeholder="Buscar usuario o crear pendiente">
                 <datalist id="usuarios">
+                  <option value="Gicela Silva">
                   <option value="Usuario AMSA">
                   <option value="Operador Sala GIO">
                   <option value="Usuario MLP">
@@ -663,22 +651,19 @@
           </div>
 
           <div class="mot-card">
-            <div class="section-title">3. Detalle de la atención</div>
+            <div class="section-title">3. Detalle / observación de la atención</div>
             <div class="section-help">
-              Explica brevemente qué se hizo. Este texto alimentará auditoría y trazabilidad.
+              Explica brevemente qué se hizo y agrega observaciones si corresponde.
             </div>
 
-            <label class="form-label">Detalle del trabajo realizado <span class="required">*</span></label>
+            <label class="form-label">Detalle / observación <span class="required">*</span></label>
             <textarea class="form-control" placeholder="Ej: Se realiza revisión de sala VCF y todas sus conexiones. Se valida funcionamiento operativo sin observaciones."></textarea>
-
-            <label class="form-label mt-3">Observaciones</label>
-            <textarea class="form-control" placeholder="Observaciones adicionales o comentarios internos"></textarea>
           </div>
 
           <div class="mot-card">
-            <div class="section-title">4. Evidencia</div>
+            <div class="section-title">4. Evidencia general</div>
             <div class="section-help">
-              Adjunta evidencia o marca que no se adjuntará nada. Para auditoría, clasifica el tipo de evidencia.
+              Adjunta evidencia si aplica. Para tareas específicas como teléfonos satelitales, el checklist se solicita dentro del flujo masivo.
             </div>
 
             <div class="row g-3">
@@ -707,11 +692,6 @@
                     No se adjunta evidencia
                   </label>
                 </div>
-              </div>
-
-              <div class="col-md-12">
-                <label class="form-label">Motivo si no se adjunta evidencia</label>
-                <textarea class="form-control" placeholder="Ej: Actividad validada en terreno sin requerimiento de fotografía."></textarea>
               </div>
             </div>
           </div>
@@ -755,21 +735,6 @@
             </div>
           </div>
 
-          <div class="mot-card">
-            <div class="section-title">6. Plantillas operacionales</div>
-            <div class="section-help">
-              Herramientas rápidas para tareas repetitivas de turno. En producción generarán atenciones Motorola automáticamente.
-            </div>
-
-            <button type="button" class="btn-template" data-bs-toggle="modal" data-bs-target="#vcfModal">
-              ⚡ Registro masivo Salas VCF
-            </button>
-
-            <button type="button" class="btn-template" data-bs-toggle="modal" data-bs-target="#satModal">
-              🛰 Registro Teléfonos Satelitales
-            </button>
-          </div>
-
           <div class="action-bar">
             <a href="index.html" class="btn-outline-msmp">Cancelar</a>
             <button type="button" class="btn-outline-msmp">Guardar borrador</button>
@@ -777,7 +742,7 @@
           </div>
 
           <div class="footer-note">
-            Versión 3.0 Demo | El guardado real se conectará a base de datos en la siguiente fase.
+            Versión 3.1 Demo | El guardado real se conectará a base de datos en la siguiente fase.
           </div>
 
         </form>
@@ -790,13 +755,26 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Registro masivo Salas VCF</h5>
+          <h5 class="modal-title">Generar Tickets Motorola - Revisión Salas VCF</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
 
         <div class="modal-body">
+          <div class="locked-box">
+            <div class="row g-3">
+              <div class="col-md-3"><div class="locked-label">Solicitante</div><div class="locked-value">Gicela Silva</div></div>
+              <div class="col-md-3"><div class="locked-label">Técnico</div><div class="locked-value">Cristhian Zarate</div></div>
+              <div class="col-md-3"><div class="locked-label">Turno</div><div class="locked-value" id="vcfShift">--</div></div>
+              <div class="col-md-3"><div class="locked-label">Estado</div><div class="locked-value">Cerrado</div></div>
+              <div class="col-md-3"><div class="locked-label">Categoría</div><div class="locked-value">VCF</div></div>
+              <div class="col-md-3"><div class="locked-label">Producto</div><div class="locked-value">Sala VCF</div></div>
+              <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Revisión de sala</div></div>
+              <div class="col-md-3"><div class="locked-label">Sitio</div><div class="locked-value">GIO MLP</div></div>
+            </div>
+          </div>
+
           <p class="text-muted">
-            Selecciona las salas revisadas. Cada sala podrá quedar asociada a un ticket Solver o marcada como pendiente.
+            Selecciona únicamente las salas revisadas e ingresa su TASK Solver si existe. El checklist VCF permanece en Microsoft Forms.
           </p>
 
           <table class="template-table">
@@ -805,27 +783,26 @@
                 <th>Revisada</th>
                 <th>Sala VCF</th>
                 <th>Ticket Solver</th>
-                <th>Forms / Checklist</th>
                 <th>Observación</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td><input type="checkbox"></td><td>Cala 2</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Pelambres</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>El Mauro</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>WorkCafe</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Punta Chungo</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Quillayes</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Chacay</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Huáltatas</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Monte Aranda</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="URL Forms o PDF"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>Cala 2</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>Pelambres</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>El Mauro</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>WorkCafe</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>Punta Chungo</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>Quillayes</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>Chacay</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>Huáltatas</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>Monte Aranda</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="modal-footer">
           <button class="btn-outline-msmp" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-msmp" onclick="confirmTemplate('VCF')">Generar registros VCF</button>
+          <button class="btn-msmp" onclick="confirmTemplate('VCF')">Generar Atenciones VCF</button>
         </div>
       </div>
     </div>
@@ -836,13 +813,26 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Registro Teléfonos Satelitales GIO MLP</h5>
+          <h5 class="modal-title">Generar Tickets Motorola - Teléfonos Satelitales GIO MLP</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
 
         <div class="modal-body">
+          <div class="locked-box">
+            <div class="row g-3">
+              <div class="col-md-3"><div class="locked-label">Solicitante</div><div class="locked-value">Gicela Silva</div></div>
+              <div class="col-md-3"><div class="locked-label">Técnico</div><div class="locked-value">Cristhian Zarate</div></div>
+              <div class="col-md-3"><div class="locked-label">Turno</div><div class="locked-value" id="satShift">--</div></div>
+              <div class="col-md-3"><div class="locked-label">Estado</div><div class="locked-value">Cerrado</div></div>
+              <div class="col-md-3"><div class="locked-label">Categoría</div><div class="locked-value">Telefonía</div></div>
+              <div class="col-md-3"><div class="locked-label">Producto</div><div class="locked-value">Teléfono Satelital</div></div>
+              <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Revisión teléfono satelital</div></div>
+              <div class="col-md-3"><div class="locked-label">Sitio</div><div class="locked-value">GIO MLP</div></div>
+            </div>
+          </div>
+
           <p class="text-muted">
-            Selecciona los teléfonos revisados y adjunta checklist AMSA si corresponde.
+            Selecciona los teléfonos revisados. Para cada teléfono satelital revisado, el checklist AMSA debe adjuntarse obligatoriamente.
           </p>
 
           <table class="template-table">
@@ -851,21 +841,21 @@
                 <th>Revisado</th>
                 <th>Teléfono Satelital</th>
                 <th>Ticket Solver</th>
-                <th>Adjuntar Checklist</th>
-                <th>Checklist no disponible</th>
+                <th>Checklist AMSA obligatorio</th>
+                <th>Observación</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881623439230</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input type="checkbox"></td></tr>
-              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881623490488</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input type="checkbox"></td></tr>
-              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881641468215</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input type="checkbox"></td></tr>
+              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881623439230</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881623490488</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881641468215</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="modal-footer">
           <button class="btn-outline-msmp" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-msmp" onclick="confirmTemplate('Teléfonos Satelitales')">Generar registros satelitales</button>
+          <button class="btn-msmp" onclick="confirmTemplate('Teléfonos Satelitales')">Generar Atenciones Satelitales</button>
         </div>
       </div>
     </div>
@@ -885,7 +875,10 @@
 
       const hour = now.getHours();
       const shift = hour >= 8 && hour < 20 ? "Día 08:00 - 20:00" : "Noche 20:00 - 08:00";
+
       document.getElementById("currentShift").innerText = shift;
+      document.getElementById("vcfShift").innerText = shift;
+      document.getElementById("satShift").innerText = shift;
     }
 
     function setValue(fieldId, value) {
@@ -904,13 +897,13 @@
     }
 
     function confirmTemplate(type) {
-      const firstConfirm = confirm("Se crearán registros Motorola para la plantilla: " + type + ". ¿Desea continuar?");
+      const firstConfirm = confirm("Se crearán tickets Motorola para la operación: " + type + ". ¿Desea continuar?");
       if (!firstConfirm) return;
 
       const secondConfirm = confirm("Confirme nuevamente. Esta acción quedará registrada para auditoría AMSA.");
       if (!secondConfirm) return;
 
-      alert("Demo: registros " + type + " preparados. En producción se guardarán en base de datos.");
+      alert("Demo: atenciones " + type + " preparadas. En producción se guardarán en base de datos.");
     }
 
     document.getElementById("pendingSolver").addEventListener("change", function() {
