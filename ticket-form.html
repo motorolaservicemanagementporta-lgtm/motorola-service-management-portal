@@ -12,7 +12,7 @@
     =========================================================
     MOTOROLA SERVICE MANAGEMENT PORTAL - MSMP
     Archivo: ticket-form.html
-    Versión: 4.2 OPERACIONAL AMSA
+    Versión: 4.3 OPERACIONAL AMSA
 
     CONCEPTO PRINCIPAL:
     Toda actividad ejecutada por Motorola debe generar un
@@ -528,14 +528,12 @@
 
               <div class="col-md-6">
                 <label class="form-label">Usuario solicitante <span class="required">*</span></label>
-                <input list="usuarios" class="form-control" id="usuario" value="Gicela Silva" placeholder="Buscar usuario o crear pendiente">
-                <datalist id="usuarios">
-                  <option value="Gicela Silva">
-                  <option value="Usuario AMSA">
-                  <option value="Operador Sala GIO">
-                  <option value="Usuario MLP">
-                </datalist>
-                
+                <input list="usuarios" class="form-control" id="usuario" value="Gicela Silva" placeholder="Buscar usuario por nombre, RUT o usuario AD">
+                <datalist id="usuarios"></datalist>
+                <div class="suggestion-box">
+                  <span class="suggestion-chip" data-bs-toggle="modal" data-bs-target="#userModal">+ Crear usuario</span>
+                  <span class="section-help mb-0">El sistema valida duplicados por RUT.</span>
+                </div>
               </div>
 
               <div class="col-md-6">
@@ -613,7 +611,9 @@
                   El listado se filtra automáticamente según el tipo seleccionado.
                 </div>
                 <div class="suggestion-box">
-                  <span class="suggestion-chip" onclick="markPendingSelect('productSelect', 'productoPending')">+ Crear producto pendiente</span>
+                  <strong>Sugerencias controladas:</strong>
+                  <span id="productSuggestionChips"></span>
+                  <span class="suggestion-chip" onclick="markPendingSelect('productSelect', 'productoPending')">+ Crear producto pendiente aprobación Admin</span>
                 </div>
                 <div id="productoPending" class="pending-badge hidden">Producto pendiente de validación Admin</div>
               </div>
@@ -629,7 +629,7 @@
                 <div class="suggestion-box">
                   <strong>Sugerencias controladas:</strong>
                   <span id="suggestionChips"></span>
-                  <span class="suggestion-chip" onclick="markPendingSelect('problemSelect', 'problemaPending')">+ Crear problema pendiente</span>
+                  <span class="suggestion-chip" onclick="markPendingSelect('problemSelect', 'problemaPending')">+ Crear problema pendiente aprobación Admin</span>
                 </div>
                 <div id="problemaPending" class="pending-badge hidden">Problema pendiente de validación Admin</div>
               </div>
@@ -727,13 +727,72 @@
           </div>
 
           <div class="footer-note">
-            Versión 4.2 Demo | Catálogos simulados en JavaScript. En producción serán administrados por perfil Admin desde base de datos.
+            Versión 4.3 Demo | Catálogos simulados en JavaScript. En producción serán administrados por perfil Admin desde base de datos.
           </div>
 
         </form>
       </section>
     </section>
   </main>
+
+
+  <!-- MODAL CREAR USUARIO -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Crear usuario solicitante</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="helper-box">
+            El RUT será usado como identificador principal para evitar usuarios duplicados.
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nombre y apellido <span class="required">*</span></label>
+              <input type="text" class="form-control" id="newUserName" placeholder="Ej: Gicela Silva">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">RUT <span class="required">*</span></label>
+              <input type="text" class="form-control" id="newUserRut" placeholder="Ej: 12.345.678-9">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Usuario AD <span class="required">*</span></label>
+              <input type="text" class="form-control" id="newUserAD" placeholder="Ej: gsilva">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Correo</label>
+              <input type="email" class="form-control" id="newUserMail" placeholder="Ej: usuario@empresa.cl">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Tipo de usuario <span class="required">*</span></label>
+              <select class="form-select" id="newUserType">
+                <option selected>Nómina</option>
+                <option>Colaborador</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Compañía / Empresa <span class="required">*</span></label>
+              <input type="text" class="form-control" id="newUserCompany" value="Minera Los Pelambres" readonly>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-outline-msmp" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn-msmp" onclick="createUser()">Crear usuario</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL VCF -->
   <div class="modal fade" id="vcfModal" tabindex="-1" aria-hidden="true">
@@ -859,6 +918,79 @@
     =========================================================
     */
 
+
+    const usersCatalog = [
+      {
+        name: "Gicela Silva",
+        rut: "Pendiente",
+        ad: "gsilva",
+        mail: "",
+        type: "Nómina",
+        company: "Minera Los Pelambres"
+      }
+    ];
+
+    function refreshUsersDatalist() {
+      const datalist = document.getElementById("usuarios");
+      if (!datalist) return;
+
+      datalist.innerHTML = "";
+      usersCatalog.forEach(user => {
+        const option = document.createElement("option");
+        option.value = user.name;
+        option.label = `${user.name} | RUT: ${user.rut} | AD: ${user.ad} | ${user.company}`;
+        datalist.appendChild(option);
+      });
+    }
+
+    function normalizeRut(rut) {
+      return String(rut || "").replace(/\./g, "").replace(/-/g, "").trim().toUpperCase();
+    }
+
+    function createUser() {
+      const name = document.getElementById("newUserName").value.trim();
+      const rut = document.getElementById("newUserRut").value.trim();
+      const ad = document.getElementById("newUserAD").value.trim();
+      const mail = document.getElementById("newUserMail").value.trim();
+      const type = document.getElementById("newUserType").value;
+      const company = document.getElementById("newUserCompany").value.trim();
+
+      if (!name || !rut || !ad || !company) {
+        alert("Debe completar Nombre y apellido, RUT, Usuario AD y Compañía / Empresa.");
+        return;
+      }
+
+      const exists = usersCatalog.some(user => normalizeRut(user.rut) === normalizeRut(rut));
+      if (exists) {
+        alert("Ya existe un usuario registrado con ese RUT. No se permite duplicar.");
+        return;
+      }
+
+      usersCatalog.push({ name, rut, ad, mail, type, company });
+      refreshUsersDatalist();
+      document.getElementById("usuario").value = name;
+
+      const modalElement = document.getElementById("userModal");
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      if (modal) modal.hide();
+
+      alert("Usuario creado en demo. En producción quedará pendiente de validación Admin.");
+    }
+
+    function handleUserTypeChange() {
+      const type = document.getElementById("newUserType").value;
+      const company = document.getElementById("newUserCompany");
+
+      if (type === "Nómina") {
+        company.value = "Minera Los Pelambres";
+        company.readOnly = true;
+      } else {
+        company.value = "";
+        company.readOnly = false;
+        company.placeholder = "Ingrese empresa colaboradora";
+      }
+    }
+
     const catalogProductsByType = {
       "Incidente Hardware": [
         "Notebook",
@@ -974,6 +1106,23 @@
       select.disabled = values.length === 0;
     }
 
+    function updateProductSuggestions(products) {
+      const container = document.getElementById("productSuggestionChips");
+      if (!container) return;
+      container.innerHTML = "";
+
+      products.slice(0, 6).forEach(product => {
+        const chip = document.createElement("span");
+        chip.className = "suggestion-chip";
+        chip.textContent = product;
+        chip.onclick = function() {
+          document.getElementById("productSelect").value = product;
+          document.getElementById("productSelect").dispatchEvent(new Event("change"));
+        };
+        container.appendChild(chip);
+      });
+    }
+
     function updateProblemSuggestions(problems) {
       const container = document.getElementById("suggestionChips");
       container.innerHTML = "";
@@ -1051,6 +1200,7 @@
 
       populateSelect("productSelect", products, products.length ? "Seleccionar producto" : "Sin productos disponibles");
       populateSelect("problemSelect", [], "Seleccione primero el producto");
+      updateProductSuggestions(products);
       updateProblemSuggestions([]);
     });
 
@@ -1090,6 +1240,9 @@
       }
     });
 
+    document.getElementById("newUserType").addEventListener("change", handleUserTypeChange);
+
+    refreshUsersDatalist();
     updateDateTime();
     setInterval(updateDateTime, 30000);
   </script>
