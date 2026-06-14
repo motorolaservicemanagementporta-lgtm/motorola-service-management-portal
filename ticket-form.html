@@ -492,11 +492,8 @@
                 <label class="form-label">Tipo referencia externa</label>
                 <select class="form-select" id="externalType">
                   <option>Seleccionar</option>
-                  <option>INC</option>
-                  <option>REQ</option>
-                  <option>RITM</option>
                   <option>TASK</option>
-                  <option>No disponible aún</option>
+                  <option>INC</option>
                 </select>
               </div>
 
@@ -538,10 +535,7 @@
                   <option value="Operador Sala GIO">
                   <option value="Usuario MLP">
                 </datalist>
-                <div class="suggestion-box">
-                  <span class="suggestion-chip" onclick="markPending('usuario')">+ Crear usuario pendiente validación</span>
-                </div>
-                <div id="usuarioPending" class="pending-badge hidden">Usuario pendiente de validación Admin</div>
+                
               </div>
 
               <div class="col-md-6">
@@ -559,23 +553,23 @@
                 <select class="form-select" id="status">
                   <option selected>Cerrado</option>
                   <option>Abierto</option>
-                  <option>En atención</option>
                   <option>Pendiente</option>
-                  <option>Resuelto</option>
                 </select>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label">Resultado <span class="required">*</span></label>
                 <select class="form-select" id="result">
-                  <option selected>Resuelto</option>
-                  <option>Resuelto con observaciones</option>
-                  <option>Pendiente AMSA</option>
-                  <option>Pendiente Usuario</option>
-                  <option>Pendiente Proveedor</option>
+                  <option selected>Operativo</option>
+                  <option>Solucionado</option>
+                  <option>Configurado</option>
+                  <option>Instalado</option>
+                  <option>Actualizado</option>
+                  <option>Reemplazado</option>
+                  <option>Derivado</option>
                   <option>Escalado</option>
-                  <option>Monitoreo</option>
-                  <option>Cancelado</option>
+                  <option>Sin falla detectada</option>
+                  <option>No aplica</option>
                 </select>
               </div>
 
@@ -864,17 +858,13 @@
     */
 
     const catalogProductsByType = {
-      "Tarea Programada": [
-        "Sala VCF Cala 2",
-        "Sala VCF Pelambres",
-        "Sala VCF El Mauro",
-        "Sala VCF WorkCafe",
-        "Sala VCF Punta Chungo",
-        "Sala VCF Quillayes",
-        "Sala VCF Chacay",
-        "Sala VCF Huáltatas",
-        "Sala VCF Monte Aranda",
-        "Teléfono Satelital"
+       "Tarea Programada": [
+        "Revisión Salas VCF",
+        "Revisión Teléfonos Satelitales",
+        "Inspección Equipamiento TI",
+        "Inventario Tecnológico",
+        "Validación SCADA",
+        "Otra Actividad Programada"
       ],
       "Incidente Hardware": [
         "Notebook",
@@ -925,6 +915,12 @@
     };
 
     const catalogProblemsByProduct = {
+      "Revisión Salas VCF": ["Inspección Programada"],
+      "Revisión Teléfonos Satelitales": ["Inspección Programada"],
+      "Inspección Equipamiento TI": ["Inspección Programada"],
+      "Inventario Tecnológico": ["Inventario Programado"],
+      "Validación SCADA": ["Validación Operativa"],
+      "Otra Actividad Programada": ["Actividad Programada"],
       "Sala VCF Cala 2": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
       "Sala VCF Pelambres": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
       "Sala VCF El Mauro": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
