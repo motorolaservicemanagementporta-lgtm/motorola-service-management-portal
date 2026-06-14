@@ -12,7 +12,7 @@
     =========================================================
     MOTOROLA SERVICE MANAGEMENT PORTAL - MSMP
     Archivo: ticket-form.html
-    Versión: 4.0 OPERACIONAL AMSA
+    Versión: 4.2 OPERACIONAL AMSA
 
     CONCEPTO PRINCIPAL:
     Toda actividad ejecutada por Motorola debe generar un
@@ -579,15 +579,16 @@
               </div>
 
               <div class="col-md-4">
-                <label class="form-label">Sitio / Faena</label>
+                <label class="form-label">Compañía <span class="required">*</span></label>
+                <select class="form-select" id="company">
+                  <option selected>Minera Los Pelambres</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Ubicación / Sitio <span class="required">*</span></label>
                 <select class="form-select" id="site">
                   <option selected>GIO MLP</option>
-                  <option>GIO</option>
-                  <option>MLP</option>
-                  <option>Centinela</option>
-                  <option>Antucoya</option>
-                  <option>Zaldívar</option>
-                  <option>Otro</option>
                 </select>
               </div>
 
@@ -595,7 +596,6 @@
                 <label class="form-label">Tipo <span class="required">*</span></label>
                 <select class="form-select" id="typeSelect">
                   <option value="">Seleccionar</option>
-                  <option>Tarea Programada</option>
                   <option>Incidente Software</option>
                   <option>Incidente Hardware</option>
                   <option>Incidente Ciberseguridad</option>
@@ -727,7 +727,7 @@
           </div>
 
           <div class="footer-note">
-            Versión 4.0 Demo | Catálogos simulados en JavaScript. En producción serán administrados por perfil Admin desde base de datos.
+            Versión 4.2 Demo | Catálogos simulados en JavaScript. En producción serán administrados por perfil Admin desde base de datos.
           </div>
 
         </form>
@@ -754,7 +754,8 @@
               <div class="col-md-3"><div class="locked-label">Tipo</div><div class="locked-value">Tarea Programada</div></div>
               <div class="col-md-3"><div class="locked-label">Producto</div><div class="locked-value">Sala VCF</div></div>
               <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Inspección</div></div>
-              <div class="col-md-3"><div class="locked-label">Sitio</div><div class="locked-value">GIO MLP</div></div>
+              <div class="col-md-3"><div class="locked-label">Compañía</div><div class="locked-value">Minera Los Pelambres</div></div>
+              <div class="col-md-3"><div class="locked-label">Ubicación / Sitio</div><div class="locked-value">GIO MLP</div></div>
             </div>
           </div>
 
@@ -812,7 +813,8 @@
               <div class="col-md-3"><div class="locked-label">Tipo</div><div class="locked-value">Tarea Programada</div></div>
               <div class="col-md-3"><div class="locked-label">Producto</div><div class="locked-value">Teléfono Satelital</div></div>
               <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Inspección</div></div>
-              <div class="col-md-3"><div class="locked-label">Sitio</div><div class="locked-value">GIO MLP</div></div>
+              <div class="col-md-3"><div class="locked-label">Compañía</div><div class="locked-value">Minera Los Pelambres</div></div>
+              <div class="col-md-3"><div class="locked-label">Ubicación / Sitio</div><div class="locked-value">GIO MLP</div></div>
             </div>
           </div>
 
@@ -858,14 +860,6 @@
     */
 
     const catalogProductsByType = {
-       "Tarea Programada": [
-        "Revisión Salas VCF",
-        "Revisión Teléfonos Satelitales",
-        "Inspección Equipamiento TI",
-        "Inventario Tecnológico",
-        "Validación SCADA",
-        "Otra Actividad Programada"
-      ],
       "Incidente Hardware": [
         "Notebook",
         "PC",
@@ -915,12 +909,6 @@
     };
 
     const catalogProblemsByProduct = {
-      "Revisión Salas VCF": ["Inspección Programada"],
-      "Revisión Teléfonos Satelitales": ["Inspección Programada"],
-      "Inspección Equipamiento TI": ["Inspección Programada"],
-      "Inventario Tecnológico": ["Inventario Programado"],
-      "Validación SCADA": ["Validación Operativa"],
-      "Otra Actividad Programada": ["Actividad Programada"],
       "Sala VCF Cala 2": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
       "Sala VCF Pelambres": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
       "Sala VCF El Mauro": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
