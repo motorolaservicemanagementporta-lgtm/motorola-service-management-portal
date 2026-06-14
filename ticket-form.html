@@ -12,7 +12,7 @@
     =========================================================
     MOTOROLA SERVICE MANAGEMENT PORTAL - MSMP
     Archivo: ticket-form.html
-    Versión: 3.1 OPERACIONAL AMSA
+    Versión: 4.0 OPERACIONAL AMSA
 
     CONCEPTO PRINCIPAL:
     Toda actividad ejecutada por Motorola debe generar un
@@ -24,6 +24,10 @@
     - Puede existir o quedar pendiente.
     - Una referencia Solver puede tener varias atenciones Motorola.
     - Las revisiones masivas VCF y Satelitales son flujos separados.
+    - La clasificación principal respeta la lógica Motorola:
+      TIPO -> PRODUCTO -> PROBLEMA.
+    - Los catálogos de esta demo están en JavaScript.
+    - En producción serán administrados por el perfil ADMIN desde base de datos.
     - VCF no adjunta checklist en MSMP porque actualmente se gestiona en Microsoft Forms.
     - Teléfonos Satelitales sí requieren checklist adjunto para auditoría AMSA.
     =========================================================
@@ -60,15 +64,25 @@
 
     .sidebar-logo {
       background: #ffffff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 24px;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 22px;
       text-align: center;
     }
 
     .sidebar-logo img {
-      max-width: 210px;
+      max-width: 205px;
       width: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .portal-name {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #475569;
+      font-weight: 800;
+      letter-spacing: .2px;
     }
 
     .sidebar-title {
@@ -396,7 +410,8 @@
 
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <img src="assets/img/motorola-solutions-logo.svg" alt="Motorola Solutions">
+        <img src="https://myaccount.motorolasolutions.com/euri/img/motoSolutions.png" alt="Motorola Solutions">
+        <div class="portal-name">Service Management Portal</div>
       </div>
 
       <div class="sidebar-title">Operación</div>
@@ -419,7 +434,7 @@
     <section class="main-area">
 
       <header class="topbar">
-        <div class="topbar-title">MSMP Demo | Perfil Técnico Motorola</div>
+        <div class="topbar-title">MSMP Portal Motorola AMSA | Perfil Técnico</div>
         <div class="topbar-user">Cristhian Zarate</div>
       </header>
 
@@ -508,14 +523,15 @@
           <div class="mot-card">
             <div class="section-title">2. Datos principales de la atención</div>
             <div class="section-help">
-              Campos simples, controlados y preparados para auditoría AMSA.
+              La clasificación se basa en la lógica operacional Motorola:
+              <strong>Tipo → Producto → Problema</strong>.
             </div>
 
             <div class="row g-3">
 
               <div class="col-md-6">
                 <label class="form-label">Usuario solicitante <span class="required">*</span></label>
-                <input list="usuarios" class="form-control" id="usuario" placeholder="Buscar usuario o crear pendiente">
+                <input list="usuarios" class="form-control" id="usuario" value="Gicela Silva" placeholder="Buscar usuario o crear pendiente">
                 <datalist id="usuarios">
                   <option value="Gicela Silva">
                   <option value="Usuario AMSA">
@@ -530,9 +546,8 @@
 
               <div class="col-md-6">
                 <label class="form-label">Técnico responsable <span class="required">*</span></label>
-                <select class="form-select">
-                  <option>Seleccionar</option>
-                  <option>Cristhian Zarate</option>
+                <select class="form-select" id="technician">
+                  <option selected>Cristhian Zarate</option>
                   <option>David Opazo</option>
                   <option>Claudio Carvallo</option>
                   <option>Leone Alvarez</option>
@@ -541,8 +556,8 @@
 
               <div class="col-md-4">
                 <label class="form-label">Estado <span class="required">*</span></label>
-                <select class="form-select">
-                  <option>Cerrado</option>
+                <select class="form-select" id="status">
+                  <option selected>Cerrado</option>
                   <option>Abierto</option>
                   <option>En atención</option>
                   <option>Pendiente</option>
@@ -552,33 +567,27 @@
 
               <div class="col-md-4">
                 <label class="form-label">Resultado <span class="required">*</span></label>
-                <select class="form-select">
-                  <option>Resuelto</option>
+                <select class="form-select" id="result">
+                  <option selected>Resuelto</option>
                   <option>Resuelto con observaciones</option>
                   <option>Pendiente AMSA</option>
                   <option>Pendiente Usuario</option>
                   <option>Pendiente Proveedor</option>
                   <option>Escalado</option>
+                  <option>Monitoreo</option>
+                  <option>Cancelado</option>
                 </select>
               </div>
 
               <div class="col-md-4">
-                <label class="form-label">Tipo <span class="required">*</span></label>
-                <select class="form-select">
-                  <option>Seleccionar</option>
-                  <option>Incidente Software</option>
-                  <option>Incidente Hardware</option>
-                  <option>Incidente Ciberseguridad</option>
-                  <option>Requerimiento Software</option>
-                  <option>Requerimiento Hardware</option>
-                  <option>Tarea Programada</option>
-                </select>
+                <label class="form-label">Turno registrado</label>
+                <input type="text" class="form-control" id="shiftField" value="--" readonly>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label">Sitio / Faena</label>
-                <select class="form-select">
-                  <option>GIO MLP</option>
+                <select class="form-select" id="site">
+                  <option selected>GIO MLP</option>
                   <option>GIO</option>
                   <option>MLP</option>
                   <option>Centinela</option>
@@ -589,60 +598,44 @@
               </div>
 
               <div class="col-md-4">
-                <label class="form-label">Categoría</label>
-                <select class="form-select">
-                  <option>Seleccionar</option>
-                  <option>VCF</option>
-                  <option>Telefonía</option>
-                  <option>Computación</option>
-                  <option>Radio</option>
-                  <option>SCADA</option>
-                  <option>Redes</option>
-                  <option>Software</option>
-                  <option>Otro</option>
+                <label class="form-label">Tipo <span class="required">*</span></label>
+                <select class="form-select" id="typeSelect">
+                  <option value="">Seleccionar</option>
+                  <option>Tarea Programada</option>
+                  <option>Incidente Software</option>
+                  <option>Incidente Hardware</option>
+                  <option>Incidente Ciberseguridad</option>
+                  <option>Requerimiento Software</option>
+                  <option>Requerimiento Hardware</option>
                 </select>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label">Producto <span class="required">*</span></label>
-                <input list="productos" class="form-control" id="producto" placeholder="Buscar producto">
-                <datalist id="productos">
-                  <option value="Sala VCF">
-                  <option value="Teléfono Satelital">
-                  <option value="Notebook">
-                  <option value="Cámara">
-                  <option value="Headset">
-                  <option value="Radio">
-                  <option value="Servidor">
-                  <option value="Software">
-                </datalist>
+                <select class="form-select" id="productSelect" disabled>
+                  <option value="">Seleccione primero el tipo</option>
+                </select>
+                <div class="section-help mt-2 mb-0">
+                  El listado se filtra automáticamente según el tipo seleccionado.
+                </div>
                 <div class="suggestion-box">
-                  <span class="suggestion-chip" onclick="setValue('producto','Sala VCF')">Sala VCF</span>
-                  <span class="suggestion-chip" onclick="setValue('producto','Teléfono Satelital')">Teléfono Satelital</span>
-                  <span class="suggestion-chip" onclick="markPending('producto')">+ Crear producto pendiente</span>
+                  <span class="suggestion-chip" onclick="markPendingSelect('productSelect', 'productoPending')">+ Crear producto pendiente</span>
                 </div>
                 <div id="productoPending" class="pending-badge hidden">Producto pendiente de validación Admin</div>
               </div>
 
               <div class="col-md-12">
-                <label class="form-label">Problema / motivo <span class="required">*</span></label>
-                <input list="problemas" class="form-control" id="problema" placeholder="Buscar problema o motivo">
-                <datalist id="problemas">
-                  <option value="Inspección">
-                  <option value="Revisión de sala">
-                  <option value="Revisión teléfono satelital">
-                  <option value="Falla HDMI">
-                  <option value="Retiro de activos">
-                  <option value="Entrega de equipo">
-                  <option value="Configuración de software">
-                  <option value="Validación operativa">
-                </datalist>
+                <label class="form-label">Problema <span class="required">*</span></label>
+                <select class="form-select" id="problemSelect" disabled>
+                  <option value="">Seleccione primero el producto</option>
+                </select>
+                <div class="section-help mt-2 mb-0">
+                  El problema se filtra según el producto seleccionado.
+                </div>
                 <div class="suggestion-box">
-                  <strong>¿Quiso decir?</strong><br>
-                  <span class="suggestion-chip" onclick="setValue('problema','Revisión de sala')">Revisión de sala</span>
-                  <span class="suggestion-chip" onclick="setValue('problema','Revisión teléfono satelital')">Revisión teléfono satelital</span>
-                  <span class="suggestion-chip" onclick="setValue('problema','Falla HDMI')">Falla HDMI</span>
-                  <span class="suggestion-chip" onclick="markPending('problema')">+ Crear problema pendiente</span>
+                  <strong>Sugerencias controladas:</strong>
+                  <span id="suggestionChips"></span>
+                  <span class="suggestion-chip" onclick="markPendingSelect('problemSelect', 'problemaPending')">+ Crear problema pendiente</span>
                 </div>
                 <div id="problemaPending" class="pending-badge hidden">Problema pendiente de validación Admin</div>
               </div>
@@ -706,9 +699,8 @@
               <div class="col-md-6">
                 <label class="form-label">¿Genera conocimiento reutilizable? <span class="required">*</span></label>
                 <select class="form-select" id="knowledgeSelect">
-                  <option>Seleccionar</option>
+                  <option selected>No aplica</option>
                   <option>Sí, documentar solución</option>
-                  <option>No aplica</option>
                 </select>
               </div>
             </div>
@@ -730,19 +722,18 @@
               </div>
             </div>
 
-            <div id="knowledgeNoApply" class="pending-badge hidden">
+            <div id="knowledgeNoApply" class="pending-badge">
               No se generó conocimiento reutilizable para esta atención.
             </div>
           </div>
 
           <div class="action-bar">
             <a href="index.html" class="btn-outline-msmp">Cancelar</a>
-            <button type="button" class="btn-outline-msmp">Guardar borrador</button>
             <button type="button" class="btn-msmp">Guardar Atención Motorola</button>
           </div>
 
           <div class="footer-note">
-            Versión 3.1 Demo | El guardado real se conectará a base de datos en la siguiente fase.
+            Versión 4.0 Demo | Catálogos simulados en JavaScript. En producción serán administrados por perfil Admin desde base de datos.
           </div>
 
         </form>
@@ -766,9 +757,9 @@
               <div class="col-md-3"><div class="locked-label">Técnico</div><div class="locked-value">Cristhian Zarate</div></div>
               <div class="col-md-3"><div class="locked-label">Turno</div><div class="locked-value" id="vcfShift">--</div></div>
               <div class="col-md-3"><div class="locked-label">Estado</div><div class="locked-value">Cerrado</div></div>
-              <div class="col-md-3"><div class="locked-label">Categoría</div><div class="locked-value">VCF</div></div>
+              <div class="col-md-3"><div class="locked-label">Tipo</div><div class="locked-value">Tarea Programada</div></div>
               <div class="col-md-3"><div class="locked-label">Producto</div><div class="locked-value">Sala VCF</div></div>
-              <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Revisión de sala</div></div>
+              <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Inspección</div></div>
               <div class="col-md-3"><div class="locked-label">Sitio</div><div class="locked-value">GIO MLP</div></div>
             </div>
           </div>
@@ -787,22 +778,22 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td><input type="checkbox"></td><td>Cala 2</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Pelambres</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>El Mauro</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>WorkCafe</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Punta Chungo</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Quillayes</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Chacay</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Huáltatas</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>Monte Aranda</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF Cala 2</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF Pelambres</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF El Mauro</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF WorkCafe</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF Punta Chungo</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF Quillayes</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF Chacay</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF Huáltatas</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="vcf-check" type="checkbox"></td><td>Sala VCF Monte Aranda</td><td><input class="form-control" placeholder="TASK..."></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="modal-footer">
           <button class="btn-outline-msmp" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-msmp" onclick="confirmTemplate('VCF')">Generar Atenciones VCF</button>
+          <button class="btn-msmp" onclick="confirmTemplate('VCF', '.vcf-check')">Generar Atenciones VCF</button>
         </div>
       </div>
     </div>
@@ -824,9 +815,9 @@
               <div class="col-md-3"><div class="locked-label">Técnico</div><div class="locked-value">Cristhian Zarate</div></div>
               <div class="col-md-3"><div class="locked-label">Turno</div><div class="locked-value" id="satShift">--</div></div>
               <div class="col-md-3"><div class="locked-label">Estado</div><div class="locked-value">Cerrado</div></div>
-              <div class="col-md-3"><div class="locked-label">Categoría</div><div class="locked-value">Telefonía</div></div>
+              <div class="col-md-3"><div class="locked-label">Tipo</div><div class="locked-value">Tarea Programada</div></div>
               <div class="col-md-3"><div class="locked-label">Producto</div><div class="locked-value">Teléfono Satelital</div></div>
-              <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Revisión teléfono satelital</div></div>
+              <div class="col-md-3"><div class="locked-label">Problema</div><div class="locked-value">Inspección</div></div>
               <div class="col-md-3"><div class="locked-label">Sitio</div><div class="locked-value">GIO MLP</div></div>
             </div>
           </div>
@@ -846,16 +837,16 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881623439230</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881623490488</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
-              <tr><td><input type="checkbox"></td><td>SAT_GIO_MLP_881641468215</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="sat-check" type="checkbox"></td><td>SAT_GIO_MLP_881623439230</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control sat-file"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="sat-check" type="checkbox"></td><td>SAT_GIO_MLP_881623490488</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control sat-file"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
+              <tr><td><input class="sat-check" type="checkbox"></td><td>SAT_GIO_MLP_881641468215</td><td><input class="form-control" placeholder="TASK..."></td><td><input type="file" class="form-control sat-file"></td><td><input class="form-control" placeholder="Sin observaciones"></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="modal-footer">
           <button class="btn-outline-msmp" data-bs-dismiss="modal">Cancelar</button>
-          <button class="btn-msmp" onclick="confirmTemplate('Teléfonos Satelitales')">Generar Atenciones Satelitales</button>
+          <button class="btn-msmp" onclick="confirmTemplate('Teléfonos Satelitales', '.sat-check', true)">Generar Atenciones Satelitales</button>
         </div>
       </div>
     </div>
@@ -864,6 +855,104 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    /*
+    =========================================================
+    CATÁLOGOS DEMO
+    En producción estos datos vendrán desde base de datos
+    y serán administrados por el perfil ADMIN.
+    =========================================================
+    */
+
+    const catalogProductsByType = {
+      "Tarea Programada": [
+        "Sala VCF Cala 2",
+        "Sala VCF Pelambres",
+        "Sala VCF El Mauro",
+        "Sala VCF WorkCafe",
+        "Sala VCF Punta Chungo",
+        "Sala VCF Quillayes",
+        "Sala VCF Chacay",
+        "Sala VCF Huáltatas",
+        "Sala VCF Monte Aranda",
+        "Teléfono Satelital"
+      ],
+      "Incidente Hardware": [
+        "Notebook",
+        "PC",
+        "Monitor",
+        "Headset",
+        "Cámara",
+        "Sala VCF Pelambres",
+        "Sala VCF Quillayes",
+        "Sala VCF El Mauro",
+        "Teléfono Satelital"
+      ],
+      "Incidente Software": [
+        "Windows",
+        "Microsoft Teams",
+        "Office 365",
+        "Software",
+        "SCADA",
+        "SCRReport",
+        "Dispatch"
+      ],
+      "Requerimiento Hardware": [
+        "Notebook",
+        "PC",
+        "Monitor",
+        "Docking",
+        "Headset",
+        "Teléfono Satelital",
+        "Cámara"
+      ],
+      "Requerimiento Software": [
+        "Microsoft Teams",
+        "Office 365",
+        "Software",
+        "SCADA",
+        "SCRReport",
+        "Dispatch",
+        "Permisos de acceso"
+      ],
+      "Incidente Ciberseguridad": [
+        "Notebook",
+        "PC",
+        "Correo",
+        "Antivirus",
+        "Cuenta de usuario",
+        "Software"
+      ]
+    };
+
+    const catalogProblemsByProduct = {
+      "Sala VCF Cala 2": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF Pelambres": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF El Mauro": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF WorkCafe": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF Punta Chungo": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF Quillayes": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF Chacay": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF Huáltatas": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Sala VCF Monte Aranda": ["Inspección", "Falla cable HDMI", "Falla de parlantes", "Falla cámara", "Sin audio", "Pantalla sin imagen"],
+      "Teléfono Satelital": ["Inspección", "Sin señal", "Batería defectuosa", "No registra red", "Falla equipo"],
+      "Notebook": ["Equipo sin red", "Equipo lento", "Sin energía", "Falla pantalla", "Revisión hardware", "Retiro de activos", "Entrega de equipo"],
+      "PC": ["Equipo sin red", "Equipo lento", "Sin energía", "Falla pantalla", "Revisión hardware"],
+      "Monitor": ["Sin imagen", "Pantalla dañada", "Parpadeo", "Cable defectuoso"],
+      "Headset": ["Sin audio", "Micrófono no funciona", "Falla de parlantes"],
+      "Cámara": ["Falla cámara", "Sin imagen", "Desenfoque", "No detectada"],
+      "Windows": ["Error sistema operativo", "Actualización", "Perfil dañado", "Inicio lento"],
+      "Microsoft Teams": ["No inicia", "Problema audio", "Problema video", "No comparte pantalla", "Error autenticación"],
+      "Office 365": ["Instalación", "Licenciamiento", "Configuración Outlook", "Error aplicación"],
+      "Software": ["Instalación", "Configuración", "Actualización", "Error aplicación"],
+      "SCADA": ["Sin acceso", "Error aplicación", "Configuración", "Validación operativa"],
+      "SCRReport": ["Instalación", "Configuración", "Licenciamiento", "Error aplicación"],
+      "Dispatch": ["Configuración", "Sin acceso", "Error aplicación", "Validación operativa"],
+      "Permisos de acceso": ["Alta de usuario", "Cambio de permiso", "Usuario bloqueado", "Acceso requerido"],
+      "Correo": ["Correo sospechoso", "Phishing", "Bloqueo preventivo"],
+      "Antivirus": ["Alerta de seguridad", "Equipo con posible virus", "Validación de amenaza"],
+      "Cuenta de usuario": ["Usuario bloqueado", "Cambio de contraseña", "Acceso sospechoso"]
+    };
+
     function updateDateTime() {
       const now = new Date();
 
@@ -877,12 +966,43 @@
       const shift = hour >= 8 && hour < 20 ? "Día 08:00 - 20:00" : "Noche 20:00 - 08:00";
 
       document.getElementById("currentShift").innerText = shift;
+      document.getElementById("shiftField").value = shift;
       document.getElementById("vcfShift").innerText = shift;
       document.getElementById("satShift").innerText = shift;
     }
 
-    function setValue(fieldId, value) {
-      document.getElementById(fieldId).value = value;
+    function populateSelect(selectId, values, placeholder) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = "";
+
+      const emptyOption = document.createElement("option");
+      emptyOption.value = "";
+      emptyOption.textContent = placeholder;
+      select.appendChild(emptyOption);
+
+      values.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+
+      select.disabled = values.length === 0;
+    }
+
+    function updateProblemSuggestions(problems) {
+      const container = document.getElementById("suggestionChips");
+      container.innerHTML = "";
+
+      problems.slice(0, 5).forEach(problem => {
+        const chip = document.createElement("span");
+        chip.className = "suggestion-chip";
+        chip.textContent = problem;
+        chip.onclick = function() {
+          document.getElementById("problemSelect").value = problem;
+        };
+        container.appendChild(chip);
+      });
     }
 
     function markPending(fieldId) {
@@ -896,15 +1016,67 @@
       badge.classList.remove("hidden");
     }
 
-    function confirmTemplate(type) {
-      const firstConfirm = confirm("Se crearán tickets Motorola para la operación: " + type + ". ¿Desea continuar?");
+    function markPendingSelect(selectId, badgeId) {
+      const select = document.getElementById(selectId);
+      const badge = document.getElementById(badgeId);
+
+      const pendingValue = "Nuevo registro pendiente";
+      const option = document.createElement("option");
+      option.value = pendingValue;
+      option.textContent = pendingValue + " | Pendiente validación Admin";
+
+      select.appendChild(option);
+      select.value = pendingValue;
+      select.disabled = false;
+      badge.classList.remove("hidden");
+    }
+
+    function confirmTemplate(type, checkboxSelector, checklistRequired = false) {
+      const checkboxes = Array.from(document.querySelectorAll(checkboxSelector));
+      const selected = checkboxes.filter(checkbox => checkbox.checked);
+
+      if (selected.length === 0) {
+        alert("Debe seleccionar al menos un elemento revisado.");
+        return;
+      }
+
+      if (checklistRequired) {
+        for (const checkbox of selected) {
+          const row = checkbox.closest("tr");
+          const fileInput = row.querySelector(".sat-file");
+
+          if (!fileInput || fileInput.files.length === 0) {
+            alert("Debe adjuntar checklist AMSA para cada teléfono satelital seleccionado.");
+            return;
+          }
+        }
+      }
+
+      const firstConfirm = confirm("Se crearán " + selected.length + " tickets Motorola para la operación: " + type + ". ¿Desea continuar?");
       if (!firstConfirm) return;
 
       const secondConfirm = confirm("Confirme nuevamente. Esta acción quedará registrada para auditoría AMSA.");
       if (!secondConfirm) return;
 
-      alert("Demo: atenciones " + type + " preparadas. En producción se guardarán en base de datos.");
+      alert("Demo: " + selected.length + " atenciones " + type + " preparadas. En producción se guardarán en base de datos.");
     }
+
+    document.getElementById("typeSelect").addEventListener("change", function() {
+      const selectedType = this.value;
+      const products = catalogProductsByType[selectedType] || [];
+
+      populateSelect("productSelect", products, products.length ? "Seleccionar producto" : "Sin productos disponibles");
+      populateSelect("problemSelect", [], "Seleccione primero el producto");
+      updateProblemSuggestions([]);
+    });
+
+    document.getElementById("productSelect").addEventListener("change", function() {
+      const selectedProduct = this.value;
+      const problems = catalogProblemsByProduct[selectedProduct] || [];
+
+      populateSelect("problemSelect", problems, problems.length ? "Seleccionar problema" : "Sin problemas disponibles");
+      updateProblemSuggestions(problems);
+    });
 
     document.getElementById("pendingSolver").addEventListener("change", function() {
       const ticketInput = document.getElementById("externalTicket");
@@ -928,12 +1100,9 @@
       if (this.value === "Sí, documentar solución") {
         knowledgeFields.classList.remove("hidden");
         noApply.classList.add("hidden");
-      } else if (this.value === "No aplica") {
-        knowledgeFields.classList.add("hidden");
-        noApply.classList.remove("hidden");
       } else {
         knowledgeFields.classList.add("hidden");
-        noApply.classList.add("hidden");
+        noApply.classList.remove("hidden");
       }
     });
 
