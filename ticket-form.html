@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nuevo Ticket Motorola | MSMP</title>
+  <title>Nueva Atención Motorola | MSMP</title>
 
-  <!-- Bootstrap: framework visual para diseño moderno y responsive -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
@@ -13,29 +12,33 @@
     =========================================================
     MOTOROLA SERVICE MANAGEMENT PORTAL - MSMP
     Archivo: ticket-form.html
-    Versión: 1.0 DEMO
+    Versión: 2.0 DEMO
 
-    OBJETIVO:
-    Formulario operativo para que el técnico Motorola registre
-    una atención interna asociada a un ticket externo Coasin/Solver.
+    CONCEPTO PRINCIPAL:
+    Toda actividad ejecutada por Motorola debe generar un
+    Ticket Motorola propio para respaldo, auditoría y reportes AMSA.
 
-    DECISIÓN OPERACIONAL:
-    Un registro Motorola = una atención ejecutada sobre un ticket externo.
+    ID INTERNO:
+    MOT-YYYY-000001
 
-    RESPONSABLE DE CREACIÓN:
-    El técnico crea, documenta, gestiona y cierra el registro Motorola.
+    REGLA OPERACIONAL:
+    - El ticket Coasin/Solver es solo una referencia externa.
+    - Puede existir o puede estar pendiente.
+    - La actividad Motorola se registra igual.
 
-    MOTIVO:
-    La operación trabaja en turnos día/noche y el supervisor no participa
-    directamente en la ejecución diaria de cada ticket.
+    USUARIO PRINCIPAL:
+    Técnico Motorola.
+
+    FLUJO REAL:
+    El técnico resuelve o ejecuta la actividad en terreno/Solver
+    y luego registra la atención en MSMP.
 
     FUTURO:
-    Este formulario alimentará:
-    - Dashboard
-    - Reportes
-    - Evidencias
+    - Base de datos
+    - Catálogos inteligentes
+    - Validación Admin
+    - Plantillas VCF / Teléfonos Satelitales
     - Biblioteca Técnica
-    - Auditoría
     =========================================================
     */
 
@@ -46,10 +49,9 @@
       --motorola-light: #f4f7fb;
       --motorola-gray: #64748b;
       --motorola-border: #d8e2ef;
-      --motorola-accent: #00a3e0;
-      --motorola-success: #16a34a;
       --motorola-warning: #f59e0b;
       --motorola-danger: #dc2626;
+      --motorola-success: #16a34a;
     }
 
     body {
@@ -79,7 +81,7 @@
     .topbar-title {
       font-size: 14px;
       color: var(--motorola-gray);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .layout {
@@ -90,7 +92,7 @@
 
     .sidebar {
       background: var(--motorola-navy);
-      color: #ffffff;
+      color: white;
       padding: 24px 18px;
     }
 
@@ -98,7 +100,7 @@
       font-size: 13px;
       color: #93c5fd;
       margin-bottom: 18px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: .8px;
     }
@@ -129,7 +131,7 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 20px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .page-title {
@@ -145,23 +147,46 @@
       max-width: 850px;
     }
 
-    .badge-demo {
-      background: #eef6ff;
-      color: var(--motorola-blue);
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    .form-card {
+    .mot-card {
       background: #ffffff;
       border: 1px solid var(--motorola-border);
       border-radius: 18px;
-      padding: 26px;
-      margin-bottom: 22px;
+      padding: 22px;
+      margin-bottom: 20px;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .summary-card {
+      background: linear-gradient(135deg, var(--motorola-blue), var(--motorola-navy));
+      color: white;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 22px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .summary-item {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      opacity: .8;
+    }
+
+    .summary-value {
+      font-size: 16px;
+      font-weight: 800;
+      margin-top: 4px;
     }
 
     .section-title {
@@ -174,7 +199,7 @@
     .section-help {
       color: var(--motorola-gray);
       font-size: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .form-label {
@@ -198,12 +223,58 @@
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 110px;
     }
 
     .required {
       color: var(--motorola-danger);
       font-weight: 900;
+    }
+
+    .pending-badge {
+      display: inline-block;
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .helper-box {
+      background: #eef6ff;
+      border-left: 5px solid var(--motorola-blue);
+      padding: 14px 16px;
+      border-radius: 12px;
+      color: #1e3a5f;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .suggestion-box {
+      background: #f8fafc;
+      border: 1px dashed var(--motorola-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .suggestion-chip {
+      display: inline-block;
+      background: #eef6ff;
+      color: var(--motorola-blue);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13px;
+      margin: 4px;
+      cursor: pointer;
+    }
+
+    .suggestion-chip:hover {
+      background: #dbeafe;
     }
 
     .btn-msmp {
@@ -236,6 +307,15 @@
       color: var(--motorola-dark-blue);
     }
 
+    .btn-soft-warning {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-weight: 800;
+    }
+
     .action-bar {
       display: flex;
       justify-content: flex-end;
@@ -244,21 +324,8 @@
       flex-wrap: wrap;
     }
 
-    .info-note {
-      background: #eef6ff;
-      border-left: 5px solid var(--motorola-blue);
-      padding: 14px 16px;
-      border-radius: 12px;
-      color: #1e3a5f;
-      font-size: 14px;
-      margin-bottom: 22px;
-    }
-
-    .knowledge-box {
-      background: #f8fafc;
-      border: 1px dashed var(--motorola-border);
-      border-radius: 14px;
-      padding: 18px;
+    .hidden {
+      display: none;
     }
 
     .footer-note {
@@ -284,8 +351,8 @@
         flex-direction: column;
       }
 
-      .topbar {
-        padding: 0 18px;
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
       }
 
       .logo-msi {
@@ -297,20 +364,8 @@
 
 <body>
 
-  <!--
-  =========================================================
-  BARRA SUPERIOR
-  Muestra identidad visual Motorola y contexto de usuario.
-  =========================================================
-  -->
   <header class="topbar">
-    <div>
-      <img
-        src="assets/img/motorola-solutions-logo.svg"
-        alt="Motorola Solutions"
-        class="logo-msi"
-      >
-    </div>
+    <img src="assets/img/motorola-solutions-logo.svg" alt="Motorola Solutions" class="logo-msi">
 
     <div class="topbar-title">
       MSMP Demo | Perfil Técnico Motorola
@@ -319,23 +374,17 @@
 
   <main class="layout">
 
-    <!--
-    =========================================================
-    MENÚ LATERAL
-    Se deja preparado para los módulos futuros.
-    En producción se mostrará según rol del usuario.
-    =========================================================
-    -->
     <aside class="sidebar">
       <div class="sidebar-title">Menú Operacional</div>
 
       <a href="dashboard.html" class="menu-link">📊 Dashboard</a>
-      <a href="ticket-form.html" class="menu-link active">➕ Nuevo Ticket</a>
-      <a href="tickets.html" class="menu-link">🎫 Tickets</a>
+      <a href="ticket-form.html" class="menu-link active">➕ Nueva Atención</a>
+      <a href="tickets.html" class="menu-link">🎫 Atenciones</a>
+      <a href="templates.html" class="menu-link">⚡ Plantillas Operacionales</a>
       <a href="evidence.html" class="menu-link">📁 Evidencias</a>
-      <a href="knowledge-base.html" class="menu-link">📚 Biblioteca Técnica</a>
+      <a href="knowledge-base.html" class="menu-link">📚 Base de Conocimiento</a>
       <a href="reports.html" class="menu-link">📈 Reportes</a>
-      <a href="users.html" class="menu-link">👥 Usuarios</a>
+      <a href="catalogs.html" class="menu-link">🧩 Catálogos</a>
       <a href="index.html" class="menu-link">↩ Cerrar sesión</a>
     </aside>
 
@@ -343,105 +392,151 @@
 
       <div class="page-header">
         <div>
-          <h1 class="page-title">Nuevo registro Motorola</h1>
+          <h1 class="page-title">Nueva Atención Motorola</h1>
           <p class="page-subtitle">
-            Registra una atención ejecutada por Motorola asociada a un ticket externo
-            de Coasin/Solver. El objetivo es documentar trabajo realizado, evidencias,
-            estado interno y conocimiento reutilizable.
+            Registra una actividad ejecutada por Motorola. Siempre se generará un Ticket Motorola
+            para respaldo interno y auditoría AMSA, aunque el ticket Coasin/Solver aún no exista.
           </p>
         </div>
-
-        <span class="badge-demo">Ticket interno MSMP</span>
       </div>
 
-      <div class="info-note">
-        <strong>Regla operacional:</strong> un registro Motorola representa una atención ejecutada
-        sobre un ticket externo. No se copia la estructura completa de Coasin/Solver, solo se usa
-        como referencia para mantener trazabilidad.
+      <!-- RESUMEN AUTOMÁTICO -->
+      <div class="summary-card">
+        <strong>Resumen automático del registro</strong>
+
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-label">Ticket Motorola</div>
+            <div class="summary-value" id="motTicket">MOT-2026-000001</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Fecha</div>
+            <div class="summary-value" id="currentDate">--</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Hora</div>
+            <div class="summary-value" id="currentTime">--</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Turno</div>
+            <div class="summary-value" id="currentShift">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="helper-box">
+        <strong>Regla principal:</strong> el Ticket Motorola es obligatorio y se genera siempre.
+        El ticket Coasin/Solver puede quedar pendiente y regularizarse después con control de auditoría.
       </div>
 
       <form>
 
-        <!--
-        =========================================================
-        SECCIÓN 1: REFERENCIA EXTERNA COASIN / SOLVER
-        Permite vincular el trabajo Motorola con el ticket original.
-        =========================================================
-        -->
-        <div class="form-card">
+        <!-- REFERENCIA EXTERNA -->
+        <div class="mot-card">
           <div class="section-title">1. Referencia externa Coasin/Solver</div>
           <div class="section-help">
-            Datos mínimos para relacionar el registro Motorola con el ticket externo.
+            Ingresa el ticket externo si existe. Si aún no existe, marca que está pendiente de creación.
           </div>
 
           <div class="row g-3">
-            <div class="col-md-3">
-              <label class="form-label">Tipo externo <span class="required">*</span></label>
-              <select class="form-select">
-                <option selected>Seleccionar</option>
+            <div class="col-md-4">
+              <label class="form-label">Tipo referencia externa</label>
+              <select class="form-select" id="externalType">
+                <option>Seleccionar</option>
                 <option>INC</option>
                 <option>REQ</option>
                 <option>RITM</option>
                 <option>TASK</option>
+                <option>No disponible aún</option>
               </select>
             </div>
 
-            <div class="col-md-3">
-              <label class="form-label">N° ticket externo <span class="required">*</span></label>
-              <input type="text" class="form-control" placeholder="Ej: TASK2050265">
+            <div class="col-md-4">
+              <label class="form-label">N° ticket Coasin/Solver</label>
+              <input type="text" class="form-control" id="externalTicket" placeholder="Ej: TASK2050265">
             </div>
 
-            <div class="col-md-3">
-              <label class="form-label">Ticket padre</label>
-              <input type="text" class="form-control" placeholder="Ej: RITM1422800">
+            <div class="col-md-4 d-flex align-items-end">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="pendingSolver">
+                <label class="form-check-label fw-bold" for="pendingSolver">
+                  Pendiente creación en Solver/Coasin
+                </label>
+              </div>
             </div>
+          </div>
 
-            <div class="col-md-3">
-              <label class="form-label">Requerimiento asociado</label>
-              <input type="text" class="form-control" placeholder="Ej: REQ1416613">
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label">Solicitante AMSA / MLP</label>
-              <input type="text" class="form-control" placeholder="Nombre solicitante">
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label">Breve descripción externa</label>
-              <input type="text" class="form-control" placeholder="Ej: Retiro de activos / equipo con posible virus">
-            </div>
+          <div id="pendingSolverMsg" class="pending-badge hidden">
+            Referencia externa pendiente. El registro Motorola podrá cerrarse y regularizarse después.
           </div>
         </div>
 
-        <!--
-        =========================================================
-        SECCIÓN 2: INFORMACIÓN OPERACIONAL MOTOROLA
-        Datos propios de la atención realizada por Motorola.
-        =========================================================
-        -->
-        <div class="form-card">
-          <div class="section-title">2. Información operacional Motorola</div>
+        <!-- DATOS PRINCIPALES -->
+        <div class="mot-card">
+          <div class="section-title">2. Datos principales de la atención</div>
           <div class="section-help">
-            Campos simples para clasificar el trabajo y permitir reportes futuros.
+            Campos basados en la planilla actual Motorola, simplificados para operación de turno.
           </div>
 
           <div class="row g-3">
-            <div class="col-md-3">
-              <label class="form-label">Turno <span class="required">*</span></label>
+
+            <div class="col-md-6">
+              <label class="form-label">Usuario solicitante <span class="required">*</span></label>
+              <input list="usuarios" class="form-control" id="usuario" placeholder="Buscar usuario o crear pendiente">
+              <datalist id="usuarios">
+                <option value="Usuario AMSA">
+                <option value="Operador Sala GIO">
+                <option value="Usuario MLP">
+              </datalist>
+              <div class="suggestion-box">
+                <span class="suggestion-chip" onclick="markPending('usuario')">+ Crear usuario pendiente validación</span>
+              </div>
+              <div id="usuarioPending" class="pending-badge hidden">Usuario pendiente de validación Admin</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Técnico responsable <span class="required">*</span></label>
               <select class="form-select">
-                <option selected>Seleccionar</option>
-                <option>Día 08:00 - 20:00</option>
-                <option>Noche 20:00 - 08:00</option>
+                <option>Seleccionar</option>
+                <option>Cristhian Zarate</option>
+                <option>David Opazo</option>
+                <option>Claudio Carvallo</option>
+                <option>Leone Alvarez</option>
               </select>
             </div>
 
-            <div class="col-md-3">
-              <label class="form-label">Sitio / Faena <span class="required">*</span></label>
+            <div class="col-md-4">
+              <label class="form-label">Estado <span class="required">*</span></label>
               <select class="form-select">
-                <option selected>Seleccionar</option>
+                <option>Cerrado</option>
+                <option>Abierto</option>
+                <option>En atención</option>
+                <option>Pendiente</option>
+                <option>Resuelto</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Tipo <span class="required">*</span></label>
+              <select class="form-select">
+                <option>Seleccionar</option>
+                <option>Incidente Software</option>
+                <option>Incidente Hardware</option>
+                <option>Incidente Ciberseguridad</option>
+                <option>Requerimiento Software</option>
+                <option>Requerimiento Hardware</option>
+                <option>Tarea Programada</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Sitio / Faena</label>
+              <select class="form-select">
                 <option>GIO</option>
                 <option>MLP</option>
-                <option>Esperanza</option>
                 <option>Centinela</option>
                 <option>Antucoya</option>
                 <option>Zaldívar</option>
@@ -449,244 +544,244 @@
               </select>
             </div>
 
-            <div class="col-md-3">
-              <label class="form-label">Tipo de registro <span class="required">*</span></label>
-              <select class="form-select">
-                <option selected>Seleccionar</option>
-                <option>Incidente</option>
-                <option>Requerimiento</option>
-                <option>Tarea programada</option>
-                <option>Inspección</option>
-                <option>Entrega</option>
-                <option>Retiro</option>
-                <option>Configuración</option>
-                <option>Mantención</option>
-              </select>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label">Prioridad interna</label>
-              <select class="form-select">
-                <option selected>Normal</option>
-                <option>Baja</option>
-                <option>Media</option>
-                <option>Alta</option>
-                <option>Crítica</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label">Servicio / producto Motorola <span class="required">*</span></label>
-              <select class="form-select">
-                <option selected>Seleccionar</option>
-                <option>Radio</option>
-                <option>MCC7500</option>
-                <option>DIMETRA</option>
-                <option>ASTRO</option>
-                <option>TRBOnet</option>
-                <option>Servidor Motorola</option>
-                <option>Red Motorola</option>
-                <option>Consola</option>
-                <option>Sala VCF</option>
-                <option>PC / Notebook</option>
-                <option>Software</option>
-                <option>Otro</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label">Equipo afectado</label>
-              <input type="text" class="form-control" placeholder="Ej: MCC7500, notebook, radio, servidor">
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label">Técnico responsable <span class="required">*</span></label>
-              <select class="form-select">
-                <option selected>Seleccionar</option>
-                <option>Cristhian Zarate</option>
-                <option>David Opazo</option>
-                <option>Claudio Carvallo</option>
-                <option>Leone Alvarez</option>
-                <option>Otro técnico</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!--
-        =========================================================
-        SECCIÓN 3: TRABAJO TÉCNICO REALIZADO
-        Esta sección documenta lo que realmente hizo Motorola.
-        =========================================================
-        -->
-        <div class="form-card">
-          <div class="section-title">3. Trabajo técnico realizado</div>
-          <div class="section-help">
-            Aquí queda la evidencia escrita de la atención. Debe ser simple, clara y útil para auditoría.
-          </div>
-
-          <div class="row g-3">
-            <div class="col-md-12">
-              <label class="form-label">Problema reportado <span class="required">*</span></label>
-              <textarea class="form-control" placeholder="Describe el problema informado en el ticket externo"></textarea>
-            </div>
-
-            <div class="col-md-12">
-              <label class="form-label">Diagnóstico Motorola</label>
-              <textarea class="form-control" placeholder="Describe qué se revisó y cuál fue el diagnóstico técnico"></textarea>
-            </div>
-
-            <div class="col-md-12">
-              <label class="form-label">Trabajo realizado <span class="required">*</span></label>
-              <textarea class="form-control" placeholder="Describe las acciones ejecutadas por Motorola"></textarea>
+            <div class="col-md-6">
+              <label class="form-label">Producto <span class="required">*</span></label>
+              <input list="productos" class="form-control" id="producto" placeholder="Buscar producto">
+              <datalist id="productos">
+                <option value="Notebook">
+                <option value="Sala VCF">
+                <option value="Teléfono Satelital">
+                <option value="Cámara">
+                <option value="Headset">
+                <option value="Radio">
+                <option value="Servidor">
+                <option value="Software">
+              </datalist>
+              <div class="suggestion-box">
+                <span class="suggestion-chip" onclick="setValue('producto','Sala VCF')">Sala VCF</span>
+                <span class="suggestion-chip" onclick="setValue('producto','Teléfono Satelital')">Teléfono Satelital</span>
+                <span class="suggestion-chip" onclick="markPending('producto')">+ Crear producto pendiente</span>
+              </div>
+              <div id="productoPending" class="pending-badge hidden">Producto pendiente de validación Admin</div>
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Resultado</label>
-              <select class="form-select">
-                <option selected>Seleccionar</option>
-                <option>Resuelto</option>
-                <option>Parcial</option>
-                <option>Pendiente AMSA</option>
-                <option>Pendiente proveedor</option>
-                <option>Escalado</option>
-              </select>
+              <label class="form-label">Problema <span class="required">*</span></label>
+              <input list="problemas" class="form-control" id="problema" placeholder="Buscar problema">
+              <datalist id="problemas">
+                <option value="Inspección">
+                <option value="Revisión de sala">
+                <option value="Falla HDMI">
+                <option value="Retiro de activos">
+                <option value="Entrega de equipo">
+                <option value="Configuración de software">
+                <option value="Validación operativa">
+              </datalist>
+              <div class="suggestion-box">
+                <strong>¿Quiso decir?</strong><br>
+                <span class="suggestion-chip" onclick="setValue('problema','Falla HDMI')">Falla HDMI</span>
+                <span class="suggestion-chip" onclick="setValue('problema','Revisión de sala')">Revisión de sala</span>
+                <span class="suggestion-chip" onclick="markPending('problema')">+ Crear problema pendiente</span>
+              </div>
+              <div id="problemaPending" class="pending-badge hidden">Problema pendiente de validación Admin</div>
             </div>
 
-            <div class="col-md-6">
-              <label class="form-label">Horas invertidas</label>
-              <input type="number" class="form-control" placeholder="Ej: 1.5" min="0" step="0.5">
-            </div>
           </div>
         </div>
 
-        <!--
-        =========================================================
-        SECCIÓN 4: EVIDENCIAS
-        En la demo el botón es visual. En producción se conectará
-        a almacenamiento de archivos.
-        =========================================================
-        -->
-        <div class="form-card">
-          <div class="section-title">4. Evidencias</div>
+        <!-- DETALLE -->
+        <div class="mot-card">
+          <div class="section-title">3. Detalle de la atención</div>
           <div class="section-help">
-            Adjunta fotografías, PDF, capturas o documentos que respalden la atención.
+            Este campo reemplaza el copiar/pegar del Excel. Debe explicar qué se hizo realmente.
+          </div>
+
+          <label class="form-label">Detalle del trabajo realizado <span class="required">*</span></label>
+          <textarea class="form-control" placeholder="Ej: Se realiza revisión de sala VCF y todas sus conexiones. Se valida funcionamiento operativo sin observaciones."></textarea>
+
+          <label class="form-label mt-3">Observaciones</label>
+          <textarea class="form-control" placeholder="Observaciones adicionales o comentarios internos"></textarea>
+        </div>
+
+        <!-- EVIDENCIA -->
+        <div class="mot-card">
+          <div class="section-title">4. Evidencia</div>
+          <div class="section-help">
+            Adjunta evidencia o marca que no se adjuntará nada. Una de las dos opciones debe quedar definida.
           </div>
 
           <div class="row g-3">
             <div class="col-md-8">
               <label class="form-label">Adjuntar evidencia</label>
-              <input type="file" class="form-control" multiple>
+              <input type="file" class="form-control" id="evidenceFile" multiple>
             </div>
 
-            <div class="col-md-4">
-              <label class="form-label">Cantidad de evidencias</label>
-              <input type="text" class="form-control" placeholder="Automático en versión final" disabled>
+            <div class="col-md-4 d-flex align-items-end">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="noEvidence">
+                <label class="form-check-label fw-bold" for="noEvidence">
+                  No se adjunta evidencia
+                </label>
+              </div>
             </div>
 
             <div class="col-md-12">
-              <label class="form-label">Observaciones de evidencia</label>
-              <textarea class="form-control" placeholder="Ej: Se adjunta fotografía de equipo retirado y captura de validación"></textarea>
+              <label class="form-label">Motivo si no se adjunta evidencia</label>
+              <textarea class="form-control" placeholder="Ej: Actividad validada en terreno sin requerimiento de fotografía."></textarea>
             </div>
           </div>
         </div>
 
-        <!--
-        =========================================================
-        SECCIÓN 5: BIBLIOTECA TÉCNICA
-        Permite transformar una solución en conocimiento reutilizable.
-        =========================================================
-        -->
-        <div class="form-card">
-          <div class="section-title">5. Biblioteca Técnica</div>
+        <!-- BASE DE CONOCIMIENTO -->
+        <div class="mot-card">
+          <div class="section-title">5. Base de Conocimiento Motorola</div>
           <div class="section-help">
-            Si la solución puede servir en futuros casos, se puede proponer como procedimiento documentado.
-          </div>
-
-          <div class="knowledge-box">
-            <div class="form-check mb-3">
-              <input class="form-check-input" type="checkbox" id="saveKnowledge">
-              <label class="form-check-label fw-bold" for="saveKnowledge">
-                Guardar esta solución en Biblioteca Técnica
-              </label>
-            </div>
-
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Título de solución</label>
-                <input type="text" class="form-control" placeholder="Ej: Validación equipo con posible virus">
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Palabras clave</label>
-                <input type="text" class="form-control" placeholder="Ej: Cylance, Defender, Windows, virus">
-              </div>
-
-              <div class="col-md-12">
-                <label class="form-label">Procedimiento / solución</label>
-                <textarea class="form-control" placeholder="Documenta los pasos que podrían reutilizarse en futuros casos"></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!--
-        =========================================================
-        SECCIÓN 6: CONTROL Y CIERRE
-        Define el estado interno del registro Motorola.
-        =========================================================
-        -->
-        <div class="form-card">
-          <div class="section-title">6. Control y cierre</div>
-          <div class="section-help">
-            Estado interno del registro Motorola. No reemplaza el estado del ticket Coasin/Solver.
+            El técnico debe indicar si esta atención genera conocimiento reutilizable o si no aplica.
           </div>
 
           <div class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label">Estado interno <span class="required">*</span></label>
-              <select class="form-select">
-                <option selected>Abierto</option>
-                <option>En proceso</option>
-                <option>Pendiente AMSA</option>
-                <option>Pendiente proveedor</option>
-                <option>Resuelto</option>
-                <option>Cerrado</option>
-                <option>Cancelado</option>
+            <div class="col-md-6">
+              <label class="form-label">¿Genera conocimiento reutilizable? <span class="required">*</span></label>
+              <select class="form-select" id="knowledgeSelect">
+                <option>Seleccionar</option>
+                <option>Sí, documentar solución</option>
+                <option>No aplica</option>
               </select>
             </div>
+          </div>
 
-            <div class="col-md-4">
-              <label class="form-label">Fecha atención</label>
-              <input type="date" class="form-control">
+          <div id="knowledgeFields" class="row g-3 mt-2 hidden">
+            <div class="col-md-6">
+              <label class="form-label">Título de solución</label>
+              <input type="text" class="form-control" placeholder="Ej: Procedimiento revisión sala VCF">
             </div>
 
-            <div class="col-md-4">
-              <label class="form-label">Fecha cierre</label>
-              <input type="date" class="form-control">
+            <div class="col-md-6">
+              <label class="form-label">Palabras clave</label>
+              <input type="text" class="form-control" placeholder="Ej: VCF, HDMI, cámara, audio, revisión">
             </div>
 
             <div class="col-md-12">
-              <label class="form-label">Observaciones finales</label>
-              <textarea class="form-control" placeholder="Comentarios finales de la atención"></textarea>
+              <label class="form-label">Procedimiento / solución</label>
+              <textarea class="form-control" placeholder="Describe los pasos que podrían reutilizarse en futuras atenciones"></textarea>
             </div>
           </div>
+
+          <div id="knowledgeNoApply" class="pending-badge hidden">
+            No se generó conocimiento reutilizable para esta atención.
+          </div>
+        </div>
+
+        <!-- PLANTILLAS FUTURAS -->
+        <div class="mot-card">
+          <div class="section-title">6. Plantillas operacionales futuras</div>
+          <div class="section-help">
+            Preparado para crear registros masivos en tareas repetitivas.
+          </div>
+
+          <button type="button" class="btn-soft-warning">
+            Próximamente: Revisión masiva Salas VCF
+          </button>
+
+          <button type="button" class="btn-soft-warning ms-2">
+            Próximamente: Teléfonos Satelitales
+          </button>
         </div>
 
         <div class="action-bar">
           <a href="index.html" class="btn-outline-msmp">Cancelar</a>
           <button type="button" class="btn-outline-msmp">Guardar borrador</button>
-          <button type="button" class="btn-msmp">Guardar registro Motorola</button>
+          <button type="button" class="btn-msmp">Guardar Ticket Motorola</button>
         </div>
 
         <div class="footer-note">
-          Versión 1.0 Demo | Este formulario aún no guarda información real. En la siguiente fase se conectará a base de datos.
+          Versión 2.0 Demo | El guardado real se conectará a base de datos en la siguiente fase.
         </div>
 
       </form>
-
     </section>
   </main>
+
+  <script>
+    /*
+    =========================================================
+    SCRIPT DEMO
+    Funciones visuales para:
+    - Fecha automática
+    - Hora automática
+    - Turno automático
+    - Ticket Motorola demo
+    - Campos pendientes de validación
+    - Base de Conocimiento condicional
+    =========================================================
+    */
+
+    function updateDateTime() {
+      const now = new Date();
+
+      const date = now.toLocaleDateString("es-CL");
+      const time = now.toLocaleTimeString("es-CL", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      const hour = now.getHours();
+      const shift = hour >= 8 && hour < 20 ? "Día 08:00 - 20:00" : "Noche 20:00 - 08:00";
+
+      document.getElementById("currentDate").innerText = date;
+      document.getElementById("currentTime").innerText = time;
+      document.getElementById("currentShift").innerText = shift;
+    }
+
+    function setValue(fieldId, value) {
+      document.getElementById(fieldId).value = value;
+    }
+
+    function markPending(fieldId) {
+      const input = document.getElementById(fieldId);
+      const badge = document.getElementById(fieldId + "Pending");
+
+      if (!input.value) {
+        input.value = "Nuevo registro pendiente";
+      }
+
+      badge.classList.remove("hidden");
+    }
+
+    document.getElementById("pendingSolver").addEventListener("change", function() {
+      const ticketInput = document.getElementById("externalTicket");
+      const message = document.getElementById("pendingSolverMsg");
+
+      if (this.checked) {
+        ticketInput.value = "Pendiente creación Solver";
+        ticketInput.disabled = true;
+        message.classList.remove("hidden");
+      } else {
+        ticketInput.value = "";
+        ticketInput.disabled = false;
+        message.classList.add("hidden");
+      }
+    });
+
+    document.getElementById("knowledgeSelect").addEventListener("change", function() {
+      const knowledgeFields = document.getElementById("knowledgeFields");
+      const noApply = document.getElementById("knowledgeNoApply");
+
+      if (this.value === "Sí, documentar solución") {
+        knowledgeFields.classList.remove("hidden");
+        noApply.classList.add("hidden");
+      } else if (this.value === "No aplica") {
+        knowledgeFields.classList.add("hidden");
+        noApply.classList.remove("hidden");
+      } else {
+        knowledgeFields.classList.add("hidden");
+        noApply.classList.add("hidden");
+      }
+    });
+
+    updateDateTime();
+    setInterval(updateDateTime, 30000);
+  </script>
 
 </body>
 </html>
