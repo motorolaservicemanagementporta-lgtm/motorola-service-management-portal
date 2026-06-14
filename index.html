@@ -19,20 +19,20 @@
     tareas realizadas sobre tickets provenientes de Coasin/Solver.
 
     ENFOQUE OPERACIONAL:
-    - Coasin/Solver: sistema externo del cliente AMSA.
-    - MSMP: sistema interno Motorola para trazabilidad,
-      evidencias, tareas, reportes y control operacional.
+    - Coasin/Solver: sistema externo utilizado como origen del ticket.
+    - MSMP: sistema interno Motorola para trazabilidad, evidencias,
+      tareas, reportes, biblioteca técnica y control operacional.
 
     ROLES PREPARADOS:
-    - TECNICO: trabaja tickets asignados.
-    - SUPERVISOR: gestiona operación y reportes.
+    - TECNICO: registra y actualiza tareas asignadas.
+    - SUPERVISOR: gestiona operación, asignaciones y reportes.
     - ADMINISTRADOR: controla usuarios, configuración y auditoría.
     - SOLICITANTE_AMSA: rol futuro para usuarios AMSA/MLP.
 
     FASE ACTUAL:
     - Login visual/demo.
     - Acceso interno Motorola.
-    - Acceso solicitante AMSA preparado para futuro.
+    - Acceso Solicitante AMSA visible, pero no habilitado.
 
     FASE FUTURA:
     - Autenticación real con Google Workspace.
@@ -145,11 +145,9 @@
       text-decoration: none;
       display: block;
       text-align: center;
-    }
-
-    .btn-amsa:hover {
-      background: #eef6ff;
-      color: var(--motorola-dark-blue);
+      opacity: 0.6;
+      pointer-events: none;
+      cursor: not-allowed;
     }
 
     .domain-badge {
@@ -269,11 +267,11 @@
 
   Acceso 2:
   Portal Solicitante AMSA.
-  Se deja preparado como crecimiento futuro para que usuarios
-  AMSA/MLP puedan crear o consultar solicitudes.
+  Se deja visible como crecimiento futuro, pero no habilitado
+  en la versión 1.0.
 
   IMPORTANTE:
-  Actualmente los botones funcionan como demo visual.
+  Actualmente el botón interno funciona como demo visual.
   La autenticación real se conectará luego con Google Workspace.
   =========================================================
   -->
@@ -298,9 +296,20 @@
         <hr class="my-4">
 
         <!--
+        =========================================================
         ACCESO INTERNO MOTOROLA
-        Redirige al dashboard operativo.
-        En producción validará cuentas @motorolasolutions.com
+
+        Objetivo:
+        Permitir acceso al portal interno MSMP.
+
+        Usuarios:
+        - Técnico
+        - Supervisor
+        - Administrador
+
+        En producción:
+        Validará cuentas corporativas @motorolasolutions.com.
+        =========================================================
         -->
         <div class="access-card">
           <div class="access-title">Acceso interno Motorola</div>
@@ -311,19 +320,34 @@
           </div>
 
           <a href="dashboard.html" class="btn-msmp">
-            Continuar con Google Workspace
+            Acceder con cuenta corporativa Motorola
           </a>
         </div>
 
         <!--
-        ACCESO FUTURO SOLICITANTE AMSA
-        Redirige a request.html.
-        En producción validará cuentas @aminerals.cl
+        =========================================================
+        MODULO SOLICITANTE AMSA
+
+        Estado:
+        Preparado para futura implementación.
+
+        Objetivo:
+        Permitir que usuarios AMSA/MLP creen solicitudes,
+        consulten estado y adjunten evidencias.
+
+        La arquitectura del portal ya considera:
+        - Creación de solicitudes
+        - Seguimiento de tickets
+        - Consulta de estado
+        - Adjuntos y evidencias
+
+        No habilitado en versión 1.0.
+        =========================================================
         -->
         <div class="access-card">
           <div class="access-title">
             Portal solicitante AMSA
-            <span class="future-badge">Preparado para futuro</span>
+            <span class="future-badge">Fase 2</span>
           </div>
           <div class="access-description">
             Para usuarios AMSA/MLP que necesiten crear o consultar solicitudes.
@@ -331,8 +355,8 @@
             <span class="domain-badge">@aminerals.cl</span>
           </div>
 
-          <a href="request.html" class="btn-amsa">
-            Ingresar como solicitante
+          <a href="#" class="btn-amsa">
+            Próximamente
           </a>
         </div>
 
@@ -349,13 +373,14 @@
         <span class="demo-badge">Propuesta Operacional Motorola</span>
 
         <h1 class="info-title">
-          Control interno de tickets, tareas y evidencias operacionales.
+          Control interno de tickets, evidencias y conocimiento técnico.
         </h1>
 
         <p class="mt-4">
           Portal diseñado para registrar la atención Motorola sobre tickets
           provenientes de Coasin/Solver, manteniendo trazabilidad, evidencias,
-          SLA interno y reportes ejecutivos.
+          SLA interno, reportes ejecutivos y una biblioteca técnica de
+          procedimientos y soluciones operacionales.
         </p>
 
         <div class="feature">
@@ -369,8 +394,8 @@
         </div>
 
         <div class="feature">
-          <strong>Evidencia y trazabilidad</strong><br>
-          Registro de tareas, comentarios, adjuntos, fechas, técnicos y estados internos.
+          <strong>Biblioteca técnica</strong><br>
+          Base de conocimiento Motorola con procedimientos, soluciones y lecciones aprendidas reutilizables.
         </div>
 
       </div>
