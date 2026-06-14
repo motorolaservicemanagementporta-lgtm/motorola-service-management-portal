@@ -13,15 +13,31 @@
     =========================================================
     MOTOROLA SERVICE MANAGEMENT PORTAL - MSMP
     Versión: 1.0 DEMO
-    Objetivo: Portal demo para gestión de tickets, incidentes,
+
+    Objetivo:
+    Portal demo para gestión de tickets, incidentes,
     requerimientos, tareas programadas y reportes operacionales.
+
+    Nota:
+    Este archivo corresponde a la pantalla inicial de acceso.
+    En futuras versiones se conectará con Firebase Authentication.
     =========================================================
     */
+
+    :root {
+      --motorola-blue: #005eb8;
+      --motorola-dark-blue: #003f7d;
+      --motorola-navy: #071f3a;
+      --motorola-light: #f4f7fb;
+      --motorola-gray: #64748b;
+      --motorola-border: #d8e2ef;
+      --motorola-accent: #00a3e0;
+    }
 
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
-      background: #0f172a;
+      background: var(--motorola-light);
       color: #1e293b;
     }
 
@@ -42,69 +58,123 @@
 
     .login-card {
       width: 100%;
-      max-width: 430px;
+      max-width: 460px;
+    }
+
+    /* Logo corporativo */
+    .logo-msi {
+      max-width: 270px;
+      margin-bottom: 28px;
     }
 
     .brand {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
-      color: #005eb8;
-      line-height: 1.2;
+      color: var(--motorola-blue);
+      line-height: 1.15;
     }
 
     .brand-subtitle {
-      color: #64748b;
-      margin-top: 10px;
+      color: var(--motorola-gray);
+      margin-top: 12px;
+      font-size: 15px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .form-control {
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid var(--motorola-border);
+    }
+
+    .form-control:focus {
+      border-color: var(--motorola-blue);
+      box-shadow: 0 0 0 0.18rem rgba(0, 94, 184, 0.15);
     }
 
     .btn-msmp {
-      background: #005eb8;
+      background: var(--motorola-blue);
       color: #fff;
       border-radius: 10px;
-      padding: 12px;
-      font-weight: 600;
+      padding: 13px;
+      font-weight: 700;
+      border: none;
     }
 
     .btn-msmp:hover {
-      background: #004b93;
+      background: var(--motorola-dark-blue);
       color: #fff;
     }
 
-    /* Panel derecho: presentación del sistema */
+    /* Panel derecho: presentación ejecutiva del sistema */
     .info-panel {
-      background: linear-gradient(135deg, #005eb8, #0f172a);
+      background:
+        radial-gradient(circle at top right, rgba(0, 163, 224, 0.35), transparent 28%),
+        linear-gradient(135deg, var(--motorola-blue), var(--motorola-navy));
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 60px;
+      padding: 70px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-panel::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      border: 70px solid rgba(255,255,255,0.06);
+      right: -140px;
+      bottom: -120px;
     }
 
     .info-content {
-      max-width: 560px;
+      max-width: 590px;
+      position: relative;
+      z-index: 1;
     }
 
     .info-title {
-      font-size: 44px;
-      font-weight: 800;
-      line-height: 1.1;
+      font-size: 46px;
+      font-weight: 850;
+      line-height: 1.08;
+      letter-spacing: -1px;
     }
 
     .feature {
       background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 14px;
-      padding: 16px;
-      margin-top: 14px;
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 15px;
+      backdrop-filter: blur(6px);
+    }
+
+    .feature strong {
+      color: #ffffff;
     }
 
     .demo-badge {
       display: inline-block;
-      background: rgba(255,255,255,0.15);
-      padding: 8px 14px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.20);
+      padding: 8px 15px;
       border-radius: 999px;
       font-size: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
+      font-weight: 600;
+    }
+
+    .version-text {
+      font-size: 14px;
+      color: var(--motorola-gray);
     }
 
     @media (max-width: 900px) {
@@ -114,6 +184,10 @@
 
       .info-panel {
         display: none;
+      }
+
+      .login-panel {
+        padding: 28px;
       }
     }
   </style>
@@ -125,7 +199,14 @@
   =========================================================
   PANTALLA LOGIN
   Primera pantalla visible del portal.
-  En futuras versiones se conectará con Firebase/Auth.
+
+  Función:
+  - Presentar el portal MSMP.
+  - Simular acceso de usuario.
+  - Redirigir al dashboard demo.
+
+  Próxima mejora:
+  - Validación real de usuario mediante Firebase/Auth.
   =========================================================
   -->
 
@@ -134,7 +215,19 @@
     <section class="login-panel">
       <div class="login-card">
 
-        <div class="brand">Motorola Service Management Portal</div>
+        <!--
+        LOGO MOTOROLA SOLUTIONS
+        Debes subir el archivo SVG en:
+        assets/img/motorola-solutions-logo.svg
+        -->
+        <img
+          src="assets/img/motorola-solutions-logo.svg"
+          alt="Motorola Solutions"
+          class="logo-msi"
+        >
+
+        <div class="brand">Service Management Portal</div>
+
         <p class="brand-subtitle">
           Plataforma demo para gestión de servicios, tickets e incidentes operacionales.
         </p>
@@ -156,7 +249,7 @@
           Ingresar al portal
         </a>
 
-        <div class="text-center text-muted mt-4">
+        <div class="text-center version-text mt-4">
           Versión 1.0 Demo | MSMP
         </div>
 
