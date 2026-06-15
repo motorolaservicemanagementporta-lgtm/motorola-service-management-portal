@@ -12,7 +12,7 @@
     =========================================================
     MOTOROLA SERVICE MANAGEMENT PORTAL - MSMP
     Archivo: ticket-form.html
-    Versión: 4.3 OPERACIONAL AMSA
+    Versión: 4.4 OPERACIONAL AMSA
 
     CONCEPTO PRINCIPAL:
     Toda actividad ejecutada por Motorola debe generar un
@@ -384,6 +384,19 @@
       background: #f8fafc;
     }
 
+
+    .priority-card{border-radius:16px;padding:18px;border:1px solid var(--motorola-border);background:#f8fafc;margin-top:14px}
+    .priority-title{font-size:13px;color:var(--motorola-gray);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+    .priority-value{font-size:22px;font-weight:900;letter-spacing:.4px}
+    .priority-low{background:#ecfdf5;border-color:#86efac;color:#166534}
+    .priority-medium{background:#fefce8;border-color:#fde047;color:#854d0e}
+    .priority-high{background:#fff7ed;border-color:#fdba74;color:#9a3412}
+    .priority-critical{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+    .search-results{border:1px solid var(--motorola-border);border-radius:12px;background:#fff;margin-top:8px;overflow:hidden;display:none}
+    .search-result-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #eef2f7;font-size:14px}
+    .search-result-item:hover{background:#eef6ff}
+    .search-result-meta{color:var(--motorola-gray);font-size:12px;margin-top:2px}
+
     @media (max-width: 950px) {
       .app-layout {
         grid-template-columns: 1fr;
@@ -528,8 +541,8 @@
 
               <div class="col-md-6">
                 <label class="form-label">Usuario solicitante <span class="required">*</span></label>
-                <input list="usuarios" class="form-control" id="usuario" value="Gicela Silva" placeholder="Buscar usuario por nombre, RUT o usuario AD">
-                <datalist id="usuarios"></datalist>
+                <input type="text" class="form-control" id="usuario" value="Gicela Silva" placeholder="Buscar usuario por nombre, RUT o usuario AD" autocomplete="off">
+                <div id="userSearchResults" class="search-results"></div>
                 <div class="suggestion-box">
                   <span class="suggestion-chip" data-bs-toggle="modal" data-bs-target="#userModal">+ Crear usuario</span>
                   <span class="section-help mb-0">El sistema valida duplicados por RUT.</span>
@@ -552,22 +565,6 @@
                   <option selected>Cerrado</option>
                   <option>Abierto</option>
                   <option>Pendiente</option>
-                </select>
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label">Resultado <span class="required">*</span></label>
-                <select class="form-select" id="result">
-                  <option selected>Operativo</option>
-                  <option>Solucionado</option>
-                  <option>Configurado</option>
-                  <option>Instalado</option>
-                  <option>Actualizado</option>
-                  <option>Reemplazado</option>
-                  <option>Derivado</option>
-                  <option>Escalado</option>
-                  <option>Sin falla detectada</option>
-                  <option>No aplica</option>
                 </select>
               </div>
 
@@ -613,7 +610,7 @@
                 <div class="suggestion-box">
                   <strong>Sugerencias controladas:</strong>
                   <span id="productSuggestionChips"></span>
-                  <span class="suggestion-chip" onclick="markPendingSelect('productSelect', 'productoPending')">+ Crear producto pendiente aprobación Admin</span>
+                  <span class="suggestion-chip" data-bs-toggle="modal" data-bs-target="#productModal">+ Crear producto pendiente aprobación Admin</span>
                 </div>
                 <div id="productoPending" class="pending-badge hidden">Producto pendiente de validación Admin</div>
               </div>
@@ -629,9 +626,15 @@
                 <div class="suggestion-box">
                   <strong>Sugerencias controladas:</strong>
                   <span id="suggestionChips"></span>
-                  <span class="suggestion-chip" onclick="markPendingSelect('problemSelect', 'problemaPending')">+ Crear problema pendiente aprobación Admin</span>
+                  <span class="suggestion-chip" data-bs-toggle="modal" data-bs-target="#problemModal">+ Crear problema pendiente aprobación Admin</span>
                 </div>
                 <div id="problemaPending" class="pending-badge hidden">Problema pendiente de validación Admin</div>
+
+                <div id="priorityCard" class="priority-card">
+                  <div class="priority-title">Prioridad Operacional automática</div>
+                  <div id="priorityValue" class="priority-value">⚪ Seleccione un problema</div>
+                  <div class="section-help mb-0">La prioridad se calcula según el problema seleccionado desde el catálogo.</div>
+                </div>
               </div>
 
             </div>
@@ -727,7 +730,7 @@
           </div>
 
           <div class="footer-note">
-            Versión 4.3 Demo | Catálogos simulados en JavaScript. En producción serán administrados por perfil Admin desde base de datos.
+            Versión 4.4 Demo | Catálogos simulados en JavaScript. En producción serán administrados por perfil Admin desde base de datos.
           </div>
 
         </form>
@@ -792,6 +795,42 @@
         </div>
       </div>
     </div>
+  </div>
+
+
+  <!-- MODAL CREAR PRODUCTO -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Crear producto pendiente aprobación Admin</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="helper-box">El producto quedará disponible en este formulario, pero marcado como pendiente de validación Admin.</div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Nombre Producto <span class="required">*</span></label><input type="text" class="form-control" id="newProductName" placeholder="Ej: CIR Report"></div>
+          <div class="col-md-6"><label class="form-label">Tipo Asociado <span class="required">*</span></label><input type="text" class="form-control" id="newProductType" readonly></div>
+          <div class="col-md-12"><label class="form-label">Descripción</label><textarea class="form-control" id="newProductDescription" placeholder="Describe brevemente el producto o sistema"></textarea></div>
+          <div class="col-md-12"><label class="form-label">Justificación <span class="required">*</span></label><textarea class="form-control" id="newProductJustification" placeholder="Indica por qué se requiere crear este producto"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-outline-msmp" data-bs-dismiss="modal">Cancelar</button><button class="btn-msmp" onclick="createProduct()">Crear producto pendiente</button></div>
+    </div></div>
+  </div>
+
+  <!-- MODAL CREAR PROBLEMA -->
+  <div class="modal fade" id="problemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Crear problema pendiente aprobación Admin</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="helper-box">El problema quedará asociado al producto seleccionado y con prioridad operacional definida para revisión Admin.</div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Nombre Problema <span class="required">*</span></label><input type="text" class="form-control" id="newProblemName" placeholder="Ej: Falla de comunicación"></div>
+          <div class="col-md-6"><label class="form-label">Producto Asociado <span class="required">*</span></label><input type="text" class="form-control" id="newProblemProduct" readonly></div>
+          <div class="col-md-6"><label class="form-label">Prioridad <span class="required">*</span></label><select class="form-select" id="newProblemPriority"><option>Baja</option><option>Media</option><option>Alta</option><option>Crítica</option></select></div>
+          <div class="col-md-12"><label class="form-label">Descripción</label><textarea class="form-control" id="newProblemDescription" placeholder="Describe el problema o motivo"></textarea></div>
+          <div class="col-md-12"><label class="form-label">Justificación <span class="required">*</span></label><textarea class="form-control" id="newProblemJustification" placeholder="Indica por qué se requiere crear este problema"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn-outline-msmp" data-bs-dismiss="modal">Cancelar</button><button class="btn-msmp" onclick="createProblem()">Crear problema pendiente</button></div>
+    </div></div>
   </div>
 
   <!-- MODAL VCF -->
@@ -930,18 +969,23 @@
       }
     ];
 
-    function refreshUsersDatalist() {
-      const datalist = document.getElementById("usuarios");
-      if (!datalist) return;
-
-      datalist.innerHTML = "";
-      usersCatalog.forEach(user => {
-        const option = document.createElement("option");
-        option.value = user.name;
-        option.label = `${user.name} | RUT: ${user.rut} | AD: ${user.ad} | ${user.company}`;
-        datalist.appendChild(option);
+    function renderUserResults(query = "") {
+      const results = document.getElementById("userSearchResults");
+      if (!results) return;
+      const q = query.toLowerCase().trim();
+      const matches = usersCatalog.filter(user => !q || user.name.toLowerCase().includes(q) || String(user.rut).toLowerCase().includes(q) || user.ad.toLowerCase().includes(q) || user.company.toLowerCase().includes(q));
+      results.innerHTML = "";
+      matches.slice(0, 8).forEach(user => {
+        const item = document.createElement("div");
+        item.className = "search-result-item";
+        item.innerHTML = `<strong>${user.name}</strong><div class="search-result-meta">RUT: ${user.rut} | AD: ${user.ad} | ${user.type} | ${user.company}</div>`;
+        item.onclick = function() { document.getElementById("usuario").value = user.name; results.style.display = "none"; };
+        results.appendChild(item);
       });
+      results.style.display = matches.length ? "block" : "none";
     }
+
+    function refreshUsersDatalist() { renderUserResults(""); }
 
     function normalizeRut(rut) {
       return String(rut || "").replace(/\./g, "").replace(/-/g, "").trim().toUpperCase();
@@ -1069,6 +1113,32 @@
       "Cuenta de usuario": ["Usuario bloqueado", "Cambio de contraseña", "Acceso sospechoso"]
     };
 
+
+    const priorityByProblem = {
+      "Inspección": "Baja", "Validación operativa": "Baja", "Actualización": "Baja",
+      "Instalación": "Media", "Configuración": "Media", "Licenciamiento": "Media", "Perfil dañado": "Media", "Inicio lento": "Media", "Equipo lento": "Media",
+      "Sin acceso": "Alta", "Error aplicación": "Alta", "Equipo sin red": "Alta", "Sin energía": "Alta", "Sin audio": "Alta", "Falla cámara": "Alta", "Falla cable HDMI": "Alta", "Falla de parlantes": "Alta",
+      "No registra red": "Crítica", "Sin señal": "Crítica", "Equipo con posible virus": "Crítica", "Alerta de seguridad": "Crítica", "Correo sospechoso": "Crítica", "Phishing": "Crítica", "Acceso sospechoso": "Crítica"
+    };
+
+    function getPriorityForProblem(problemName) {
+      if (!problemName || problemName === "Nuevo registro pendiente") return "";
+      return priorityByProblem[problemName] || "Media";
+    }
+
+    function updatePriorityCard(priority) {
+      const card = document.getElementById("priorityCard");
+      const value = document.getElementById("priorityValue");
+      if (!card || !value) return;
+      card.classList.remove("priority-low", "priority-medium", "priority-high", "priority-critical");
+      const p = String(priority || "").toLowerCase();
+      if (p === "baja") { card.classList.add("priority-low"); value.textContent = "🟢 BAJA"; }
+      else if (p === "media") { card.classList.add("priority-medium"); value.textContent = "🟡 MEDIA"; }
+      else if (p === "alta") { card.classList.add("priority-high"); value.textContent = "🟠 ALTA"; }
+      else if (p === "crítica" || p === "critica") { card.classList.add("priority-critical"); value.textContent = "🔴 CRÍTICA"; }
+      else { value.textContent = "⚪ Seleccione un problema"; }
+    }
+
     function updateDateTime() {
       const now = new Date();
 
@@ -1133,6 +1203,7 @@
         chip.textContent = problem;
         chip.onclick = function() {
           document.getElementById("problemSelect").value = problem;
+          updatePriorityCard(getPriorityForProblem(problem));
         };
         container.appendChild(chip);
       });
@@ -1162,6 +1233,60 @@
       select.value = pendingValue;
       select.disabled = false;
       badge.classList.remove("hidden");
+    }
+
+
+    function nowAuditStamp() { return new Date().toLocaleString("es-CL"); }
+
+    function openProductModalDefaults() {
+      document.getElementById("newProductType").value = document.getElementById("typeSelect").value || "Seleccione un tipo primero";
+    }
+
+    function openProblemModalDefaults() {
+      document.getElementById("newProblemProduct").value = document.getElementById("productSelect").value || "Seleccione un producto primero";
+    }
+
+    function createProduct() {
+      const name = document.getElementById("newProductName").value.trim();
+      const type = document.getElementById("typeSelect").value;
+      const justification = document.getElementById("newProductJustification").value.trim();
+      if (!type) { alert("Debe seleccionar un Tipo antes de crear un producto."); return; }
+      if (!name || !justification) { alert("Debe completar Nombre Producto y Justificación."); return; }
+      catalogProductsByType[type] = catalogProductsByType[type] || [];
+      if (catalogProductsByType[type].some(p => p.toLowerCase() === name.toLowerCase())) { alert("Este producto ya existe para el tipo seleccionado."); return; }
+      const pendingName = `${name} | Pendiente validación Admin`;
+      catalogProductsByType[type].push(pendingName);
+      catalogProblemsByProduct[pendingName] = ["Nuevo problema pendiente"];
+      populateSelect("productSelect", catalogProductsByType[type], "Seleccionar producto");
+      updateProductSuggestions(catalogProductsByType[type]);
+      document.getElementById("productSelect").value = pendingName;
+      document.getElementById("productSelect").dispatchEvent(new Event("change"));
+      document.getElementById("productoPending").classList.remove("hidden");
+      const modal = bootstrap.Modal.getInstance(document.getElementById("productModal"));
+      if (modal) modal.hide();
+      alert(`Producto creado como pendiente de validación Admin. Auditoría: creado por Cristhian Zarate el ${nowAuditStamp()}.`);
+    }
+
+    function createProblem() {
+      const name = document.getElementById("newProblemName").value.trim();
+      const product = document.getElementById("productSelect").value;
+      const priority = document.getElementById("newProblemPriority").value;
+      const justification = document.getElementById("newProblemJustification").value.trim();
+      if (!product) { alert("Debe seleccionar un Producto antes de crear un problema."); return; }
+      if (!name || !justification) { alert("Debe completar Nombre Problema y Justificación."); return; }
+      catalogProblemsByProduct[product] = catalogProblemsByProduct[product] || [];
+      if (catalogProblemsByProduct[product].some(p => p.toLowerCase() === name.toLowerCase())) { alert("Este problema ya existe para el producto seleccionado."); return; }
+      const pendingName = `${name} | Pendiente validación Admin`;
+      catalogProblemsByProduct[product].push(pendingName);
+      priorityByProblem[pendingName] = priority;
+      populateSelect("problemSelect", catalogProblemsByProduct[product], "Seleccionar problema");
+      updateProblemSuggestions(catalogProblemsByProduct[product]);
+      document.getElementById("problemSelect").value = pendingName;
+      document.getElementById("problemaPending").classList.remove("hidden");
+      updatePriorityCard(priority);
+      const modal = bootstrap.Modal.getInstance(document.getElementById("problemModal"));
+      if (modal) modal.hide();
+      alert(`Problema creado como pendiente de validación Admin. Auditoría: creado por Cristhian Zarate el ${nowAuditStamp()}.`);
     }
 
     function confirmTemplate(type, checkboxSelector, checklistRequired = false) {
@@ -1210,6 +1335,11 @@
 
       populateSelect("problemSelect", problems, problems.length ? "Seleccionar problema" : "Sin problemas disponibles");
       updateProblemSuggestions(problems);
+      updatePriorityCard("");
+    });
+
+    document.getElementById("problemSelect").addEventListener("change", function() {
+      updatePriorityCard(getPriorityForProblem(this.value));
     });
 
     document.getElementById("pendingSolver").addEventListener("change", function() {
@@ -1241,8 +1371,13 @@
     });
 
     document.getElementById("newUserType").addEventListener("change", handleUserTypeChange);
+    document.getElementById("usuario").addEventListener("input", function(){ renderUserResults(this.value); });
+    document.getElementById("usuario").addEventListener("focus", function(){ renderUserResults(this.value); });
+    document.getElementById("productModal").addEventListener("show.bs.modal", openProductModalDefaults);
+    document.getElementById("problemModal").addEventListener("show.bs.modal", openProblemModalDefaults);
 
     refreshUsersDatalist();
+    updatePriorityCard("");
     updateDateTime();
     setInterval(updateDateTime, 30000);
   </script>
